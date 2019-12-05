@@ -1,0 +1,44 @@
+* Photoperiod analysis
+** DONE Load Packages and base data
+CLOSED: [2019-06-05 Wed 12:12]
+*** DONE Is the data set correct?
+CLOSED: [2019-06-05 Wed 12:12]
+** DONE Ideally we want tibble with the variables
+CLOSED: [2019-06-05 Wed 12:12]
+- species
+- avg_ffd: Average first flowering day (doy)
+- photo: photoperiod sensitive (T/F)
+- year: year of observation
+- GF: Growth Form (H/W) (different script, below)
+- LH: Life History (annual/perennial) (different script, below) 
+*** DONE Issues:
+CLOSED: [2019-06-05 Wed 12:12]
+- multiple values in pp (should only be 1?)
+- what's the correct source dataset?
+** DONE Get Life History and Growth Form Data
+CLOSED: [2019-06-05 Wed 12:13]
+- Life history data (annual/perennial) from the TRY plant database  
+- Growth form data (woody/herbaceous) was adapted from Zanne et al. (2009). 
+- Species that could not be readily classified in to these groups were excluded from the relevant analyses
+** TODO Effect of Photoperiod Sensitivity on First Flowering Date over time
+*** TODO mixed effect generalised linear model
+*** TODO photoperiod sensitive vs photoperiod insensitive
+*** calculated the rate of change per decade by multiplying the slope of each line (the annual rate of change) by 10
+*** We also fitted linear models to the combined dataset including both photoperiod sensitive and insensitive species to identify whether it made a significant difference over time (Appendix C) and to each species, extracting the gradient of the line to find their individual rates of advancement.
+** TODO Phylogentic Analysis
+*** Combine the photoperiod sensitivity data with the phylogenetic data using used the ‘phylosignal’ package
+*** pruning the phylogenetic tree published by Zanne et al. (2014) using the ‘ape’ package
+*** Phylogenetic signal and the significance of the signal was calculated using ‘phylo.d’ from the ‘caper’ package to find:
+**** Frits D 
+**** Purvis’ D
+** TODO We performed chi-squared tests comparing photoperiod sensitivity with life history and woodiness using the ‘chisq.test’ command from base R (R Core Team, 2017).
+
+```{r}
+source("getChisqGFLH.R")
+
+Photo.GFLH.Results <- getChisqGFLH(data)
+```
+
+** TODO Visualise Data
+*** Figure 1
+*** Figure 2

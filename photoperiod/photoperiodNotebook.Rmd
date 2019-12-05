@@ -1,0 +1,222 @@
+---
+title: "Photoperiod Project R Notebook"
+output: html_notebook
+---
+
+Load Packages and Base data
+
+#Photoperiod data:
+- species
+- photoperiodism: photoperiod sensitivity requirements(ad, id, ld, sd, ldsd, lsd, sd, sld, yes (exists in unknown form), na)
+- cultivar: if present, cultivar name
+- reference: source of information
+- notes: additional notes on photoperiod sensitivity
+- sensitivity_yn: binary variable of whether photoperiod sensitivity in any form exists in species
+
+#Flowering time data:
+- species
+- year: year of record
+- doy: day of year
+- source: source of information
+
+```{r}
+library(tidyverse)
+
+mypalette <- c("#0072B2","#E69F00")
+
+pp <- read.csv("./Data/appendix1.csv") #read in photoperiod data
+
+ft <- read.csv("./Data/appendix2.csv")
+```
+
+Combine Photoperiod and Annual Average Flowering Day of Year data
+
+#Combined photoperiod and flowering time data
+- species
+- doy: average first flowering day of a species each year
+- year
+- source: source of record
+
+
+
+```{r}
+
+source("./R/joinFloweringData.R")
+
+data <- joinFloweringData(pp, ft) #adding flowering time info to photoperiod sensitivity info
+
+```
+
+
+Effect of Photoperiod Sensitivity on First Flowering Date over time
+- mixed effect generalised linear model
+- photoperiod sensitive vs photoperiod insensitive
+- lmer function in the lme4 package
+- obtained P-values using the lmerTest package
+
+Analyse data
+
+```{r include=FALSE}
+source("./R/getPhotoFFD.R")
+
+Photo.FFD.Results <- getPhotoFFD(data) #Analyse data
+
+```
+
+Optional: Check Assumptions
+results for linear models
+-Residuals for linear models
+-QQplots for linear models
+-AIC for linear models
+-Results for ANOVAs
+
+```{r}
+summary(Photo.FFD.Results$lm_interaction)
+Photo.FFD.Results$residuals_interaction
+Photo.FFD.Results$qq_interaction
+Photo.FFD.Results$aic_interaction
+Photo.FFD.Results$anova
+
+summary(Photo.FFD.Results$lm_t)
+summary(Photo.FFD.Results$lm_f)
+```
+
+The Results
+
+Photoperiod sensitive plants are flowering later than photoperiod insensitive plants
+- Significant effect of photoperiod sensitivity 
+
+```{r}
+summary(Photo.FFD.Results$lm_interaction)
+Photo.FFD.Results$photo_plot #show plot
+```
+
+No evidence for different first flowering between photoperiod sensitive and photoperiod insensitive species
+- Effect of photoperiod sensitivity on first flowering non-significant
+
+No evidence for differing rates of change between photoperiod sensitive and photoperiod insensitive species
+- Interaction between photoperiod sensitive and insensitive species non-significant
+
+```{r}
+summary(Photo.FFD.Results$lm_interaction)
+```
+
+Additional Analysis
+- Because we had different sample sizes for photoperiod sensitive v photoperiod insensitive groups, 
+  we could not compare the variances of the two groups
+- Thus, an ANOVA could not be peformed
+- We can however compare means of the two groups
+
+- So we fitted linear models to the combined dataset including both photoperiod sensitive and insensitive species to identify whether it made a significant difference over time (Appendix C) and to each species, extracting the gradient of the line to find their individual rates of advancement.
+
+- The resulting graph shows that there is no difference between photoperiod sensitive and photoperiod insensitive species.
+#add line to show n of samples for each treatment group so people don't ask to compare the variance
+
+```{r}
+source("./R/getPhotoAdditional.R")
+
+Photo.Additional.Results <- getPhotoAdditional(data)
+
+Photo.Additional.Results$data_models_output #show modelled changes in FFD for each species
+Photo.Additional.Results$data_models_ttest
+Photo.Additional.Results$box_plot #show plot
+
+```
+
+
+Comparing the occurence of photoperiod sensitivity with other traits
+
+Get photoperiodism data
+- Remove parts not needed for analysis
+
+Get Life History and Growth Form Data
+- Life history data (annual/perennial) from the TRY plant database  
+- Growth form data (woody/herbaceous) was adapted from Zanne et al. (2009). 
+- Species that could not be readily classified in to these groups were excluded from the relevant analyses
+
+#Only works half the time?
+
+```{r}
+traits_data <- transmute(pp, species = species, photoperiodism = photoperiodism, photoperiod_sensitive = sensitivity_yn)
+
+source("./R/addLHGF.R")
+
+traits_data <- addLHGF(traits_data) #takes tibble, and adds columns for life history and growth form
+```
+
+
+```{r}
+source("./R/piechart.R")
+```
+
+Analyse Life History
+```{r}
+life_history <- traits_data %>% #Tally life histories
+  filter(!is.na(life))%>%
+  group_by(photoperiod_sensitive, life) %>%
+  tally()
+
+life_history
+
+life_history_chi <- chisq.test(life_history$n, p = c(0.25, 0.25, 0.25, 0.25)) #Perform chi-square test
+
+life_history_chi
+life_history_chi$residuals
+```
+
+ and Growth Form Data
+ 
+```{r}
+woodiness <- traits_data %>%
+  filter(!is.na(woodiness), woodiness != "variable")%>% #remove NAs and variable woodiness
+  group_by(photoperiod_sensitive, woodiness) %>%
+  tally()
+
+woodiness
+
+woodiness_chi <- chisq.test(woodiness$n, p = c(0.25, 0.25, 0.25, 0.25))
+woodiness_chi
+woodiness_chi$residuals
+```
+ 
+
+Phylogentic Analysis
+- Combine the photoperiod sensitivity data with the phylogenetic data using used the phylosignal package
+- pruning the phylogenetic tree published by Zanne et al. (2014) using the ape package
+- Phylogenetic signal and the significance of the signal was calculated using phylo.d from the caper package to:
+  - find Frits and Purvis D 
+
+```{r}
+data <- pp
+
+source("./R/getPhylo.R")
+
+Photo.Phylo.Results <- getPhylo(data)
+```
+
+
+Finally, we performed chi-squared tests comparing photoperiod sensitivity with life history and woodiness using the chisq.test command from base R (R Core Team, 2017).
+
+```{r}
+source("getChisqGFLH.R")
+
+Photo.GFLH.Results <- getChisqGFLH(data)
+```
+
+
+
+```{r}
+
+Photo.FFD.Results$plot
+
+
+ggplot(data, aes(y=doy, x=year, colour = photoperiod_sensitive))+
+  geom_point()
+
+
+Photo.Phylo.Results
+
+Photo.GFLH.Results
+
+```
+

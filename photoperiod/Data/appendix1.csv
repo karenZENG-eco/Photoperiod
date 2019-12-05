@@ -1,0 +1,789 @@
+"species","photoperiodism","cultivar","reference","notes","sensitivity_yn"
+"Achillea_millifolium","ld","","laurie and poesch 1932","",TRUE
+"Achyranthes_brilliantissima","na","","laurie and poesch 1932","",FALSE
+"Aechma_fasciata","ld","","thomas and vince prue 1997","",TRUE
+"Aeschyanthus_speciosus","ld","koral","roh 1991","day neutral at 18 degrees, long day at 24 degrees",TRUE
+"Agrimonia_qupatoria","na","","thomas and vince prue 1997","",FALSE
+"Agrostemma_githago","ld","","thomas and vince prue 1997","",TRUE
+"Agrostis_alba","sd","","cooper and calder 1964","",TRUE
+"Agrostis_canina","sd","","cooper and calder 1964","",TRUE
+"Agrostis_capillaris","na","","heide 1994","",FALSE
+"Agrostis_stolonifera","ld","","thomas and vince prue 1997","",TRUE
+"Agrostis_tenuis","na","","cooper and calder 1964","",FALSE
+"Aira_praecox","na","","cooper and calder 1964","",FALSE
+"Allium_ampeloprasum","ld","","thomas and vince prue 1997","",TRUE
+"Allium_cepa","na","","thomas and vince prue 1997","",FALSE
+"Allium_chinensis","ld","","thomas and vince prue 1997","",TRUE
+"Allium_sativum","sd","","thomas and vince prue 1997","",TRUE
+"Allium_sphaerocephalon","ld","","thomas and vince prue 1997","",TRUE
+"Allium_tuberosum","ld","","thomas and vince prue 1997","",TRUE
+"Aloe_bulbeifera","lsd","","thomas and vince prue 1997","",TRUE
+"Alopecurus_aequalis","ld","","wisskirchin 2006","",TRUE
+"Alopecurus_agrestis","sd","","cooper and calder 1964","",TRUE
+"Alopecurus_pratensis","sld","","thomas and vince prue 1997","",TRUE
+"Alstoemeria_regina","ld","","thomas and vince prue 1997","",TRUE
+"Amaranthis_retroflexus","sd","","thomas and vince prue 1997","",TRUE
+"Amaranthus_caudatius_caudatus","sd","","thomas and vince prue 1997","",TRUE
+"Amaranthus_caudatus_albiflorus","sd","","thomas and vince prue 1997","",TRUE
+"Amaranthus_graecizans","sd","","thomas and vince prue 1997","",TRUE
+"Amaranthus_hybridus","na","pygmy torch","mattson and erwin 2005","",FALSE
+"Amaranthus_rudis","sd","","wu and owen 2014","",TRUE
+"Amaranthus_tricolor","sd","","thomas and vince prue 1997","",TRUE
+"Ambrosia_artemisiifolia","sd","","scalone et al 2016","",TRUE
+"Ambrosia_elatior","sd","","thomas and vince prue 1997","",TRUE
+"Ammi_majus","ld","","mattson and erwin 2005","",TRUE
+"Anagallis_arvensis","ld","","thomas and vince prue 1997","",TRUE
+"Anagallis_tenella","ld","","thomas and vince prue 1997","",TRUE
+"Anansa_comosus","sd","","thomas and vince prue 1997","",TRUE
+"Anchusa_capensis","ld","","armitage and garner 1999","",TRUE
+"Andopogon_virginicus","sd","","thomas and vince prue 1997","",TRUE
+"Andropogon_gayanus","sd","","thomas and vince prue 1997","",TRUE
+"Androsacea_alpina","ld","","keller and korner 2003","",TRUE
+"Anemone_coronaria","ld","","thomas and vince prue 1997","",TRUE
+"Anethum_graveolens","ld","","thomas and vince prue 1997","",TRUE
+"Anigosanthus_manglesii","sd","","thomas and vince prue 1997","",TRUE
+"Anigozanthos_flavidus","ld","","thomas and vince prue 1997","",TRUE
+"Anigozanthos_pulcherrimus","na","","thomas and vince prue 1997","",FALSE
+"Anigozanthos_rufus","na","","thomas and vince prue 1997","",FALSE
+"Anthemis_cotula","ld","","thomas and vince prue 1997","",TRUE
+"Anthriscus_cerefolium","ld","","thomas and vince prue 1997","",TRUE
+"Antirrhinum_majus","ld","","thomas and vince prue 1997","",TRUE
+"Aphelandra_squarrosa","na","","thomas and vince prue 1997","",FALSE
+"Apium_graveolens","na","","thomas and vince prue 1997","",FALSE
+"Apium_graveolens_var_rapaceum","sd","","thomas and vince prue 1997","",TRUE
+"Aquilegia_x_hybrida","ld","","thomas and vince prue 1997","",TRUE
+"Arabidopsis_thaliana","ld","","minchniew 1965","",TRUE
+"Arabis__blepharophylla","na","","armitage and garner 1999","",FALSE
+"Arachis_hypogaea","na","","thomas and vince prue 1997","",FALSE
+"Arctium_lappa","ld","","thomas and vince prue 1997","",TRUE
+"Arenaria_serpyllifolia","ld","","thomas and vince prue 1997","",TRUE
+"Aristeda_contorta","id","","thomas and vince prue 1997","",TRUE
+"Arrhenatherum_elatius","na","","cooper and calder 1964","",FALSE
+"Artriplex_prostrata","sd","","wisskirchin 2006","",TRUE
+"Asclepias_tuberosa","na","","thomas and vince prue 1997","",FALSE
+"Asparagus_plumosus","na","","laurie and poesch 1932","",FALSE
+"Aspargus_sprengeri","na","","laurie and poesch 1932","",FALSE
+"Asperula_arvensis","ld","blue mist","mattson and erwin 2005","",TRUE
+"Aster_novi-belgii","lsd","","thomas and vince prue 1997","also kell et al 1997",TRUE
+"Aster_pilosus","lsd","","thomas and vince prue 1997","",TRUE
+"Aurina_saxatilis","ld","","thomas and vince prue 1997","",TRUE
+"Avena_fastuosa","ld","","thomas and vince prue 1997","",TRUE
+"Avena_sativa","ld","","thomas and vince prue 1997","",TRUE
+"Baeria_chrysostoma","ld","","thomas and vince prue 1997","",TRUE
+"Begonia_bowerae_x_chemantha","sd","","thomas and vince prue 1997","",TRUE
+"Begonia_bowerae_x_hiemalis","sd","","thomas and vince prue 1997","",TRUE
+"Beta_vulgaris","ld","","Lane et al 1965","",TRUE
+"Beta_vulgaris_vulgaris","ld","","thomas and vince prue 1997","",TRUE
+"Bidens_cernua","sd","","wisskirchin 2006","",TRUE
+"Bidens_radiata","sd","","thomas and vince prue 1997","",TRUE
+"Bidens_tripartita","sd","","wisskirchin 2006","",TRUE
+"Blepharis_linearifolia","na","","thomas and vince prue 1997","",FALSE
+"Blitum_capitatum","ld","","thomas and vince prue 1997","",TRUE
+"Blitum_virgatum","ld","","thomas and vince prue 1997","",TRUE
+"Bothriochloa_mutica","sd","","thomas and vince prue 1997","",TRUE
+"Bougainvillea_glabra","sd","","garner and allard 1923","",TRUE
+"Bouteloua_eripoda","sd","","thomas and vince prue 1997","",TRUE
+"Bouvardia","sd","","thomas and vince prue 1997","",TRUE
+"Brachiaria_ruziziensis","sd","","thomas and vince prue 1997","",TRUE
+"Brachypodium_pinnatum","na","","cooper and calder 1964","",FALSE
+"Brachypodium_sylvaticum","na","","cooper and calder 1964","",FALSE
+"Brassavola_nodosa","sd","","thomas and vince prue 1997","",TRUE
+"Brassica_alba","ld","","thomas and vince prue 1997","",TRUE
+"Brassica_campestris_oleifera","ld","","thomas and vince prue 1997","",TRUE
+"Brassica_carinata","ld","","thomas and vince prue 1997","",TRUE
+"Brassica_juncea","ld","","thomas and vince prue 1997","",TRUE
+"Brassica_napus_oleifera","ld","","thomas and vince prue 1997","",TRUE
+"Brassica_nigra","ld","","thomas and vince prue 1997","",TRUE
+"Brassica_pekinensis","ld","","thomas and vince prue 1997","",TRUE
+"Brassica_spp","na","","thomas and vince prue 1997","",FALSE
+"Briza_media","na","","cooper and calder 1964","",FALSE
+"Bromis_inermis_dactylis_glomerata","sld","","thomas and vince prue 1997","",TRUE
+"Bromus_erectus","sd","","cooper and calder 1964","",TRUE
+"Bromus_inermis","sd","","heide 1994","",TRUE
+"Bromus_racemosus","na","","cooper and calder 1964","",FALSE
+"Bromus_rubens","na","","cooper and calder 1964","",FALSE
+"Bromus_secalinus","na","","cooper and calder 1964","",FALSE
+"Browallia_speciosa","na","","thomas and vince prue 1997","",FALSE
+"Brunsfelsia_pauciflora","na","","thomas and vince prue 1997","",FALSE
+"Cajunus_cajan","sd","","thomas and vince prue 1997","",TRUE
+"Calamintha_acinus","ld","","thomas and vince prue 1997","from wareing book",TRUE
+"Calathea_crocata","sd","","thomas and vince prue 1997","from wareing book",TRUE
+"Calceolaria_hybrida","ld","","laurie and poesch 1932","from wareing book",TRUE
+"Calendula_officinalis","ld","","laurie and poesch 1932","",TRUE
+"Calibrachoa_calycina","ld","","kanaya 2010","calibrachoa cultivars act slightly differently to the natural plants",TRUE
+"Calibrachoa_eglandulata","ld","","kanaya 2010","",TRUE
+"Calibrachoa_elegans","ld","","kanaya 2010","",TRUE
+"Calibrachoa_ericaefolia","ld","","kanaya 2010","",TRUE
+"Calibrachoa_heterophylla","ld","","kanaya 2010","",TRUE
+"Calibrachoa_linearis","ld","","kanaya 2010","",TRUE
+"Calibrachoa_linoides","ld","","kanaya 2010","",TRUE
+"Calibrachoa_macrodactylon","ld","","kanaya 2010","",TRUE
+"Calibrachoa_micrantha","ld","","kanaya 2010","",TRUE
+"Calibrachoa_rupestris","ld","","kanaya 2010","",TRUE
+"Calibrachoa_selloviana","ld","","kanaya 2010","",TRUE
+"Calibrachoa_sendtneriana","ld","","kanaya 2010","",TRUE
+"Calibrachoa_serrulata","ld","","kanaya 2010","",TRUE
+"Calibrachoa_spathulata","ld","","kanaya 2010","",TRUE
+"Calibrachoa_thymifolia","ld","","kanaya 2010","",TRUE
+"Callistephus_chinesis","ld","","thomas and vince prue 1997","",TRUE
+"Callistephus_hortensis","ld","","laurie and poesch 1932","",TRUE
+"Calluna_vulgaris","ld","","chouard 1946","",TRUE
+"Calonyction_aculeatum","sd","","garner and allard 1923","",TRUE
+"Calytrix_fraseri","ld","","king et al 2008","",TRUE
+"Camellia_japonica","ld","","thomas and vince prue 1997","",TRUE
+"Camellia_wabisuke","sd","","gou et al 1993","",TRUE
+"Campanula_alliariifolia","ld","","thomas and vince prue 1997","",TRUE
+"Campanula_carpatica","ld","","runkle et al 1998","",TRUE
+"Campanula_fragilis","ld","","thomas and vince prue 1997","",TRUE
+"Campanula_isophylla","ld","","thomas and vince prue 1997","",TRUE
+"Campanula_medium","sld","","thomas and vince prue 1997","",TRUE
+"Campanula_persicifolia_c","ld","","thomas and vince prue 1997","",TRUE
+"Campanula_pyramidalis","ld","","thomas and vince prue 1997","",TRUE
+"Campanulaisophylla_moretti","ld","","moe 1990","",TRUE
+"Cannibis_sativa","yes","","heslop-harrison 1960","",TRUE
+"Cantanache_caerulea","ld","","armitage and garner 1999","",TRUE
+"Capsicum_annuum","id","","thomas and vince prue 1997","",TRUE
+"Cardamine_amara","na","","thomas and vince prue 1997","",FALSE
+"Carex_arctogena","na","","heide 2002","sd under high temperature",FALSE
+"Carex_canescens","na","","heide 2002","norwegian population, australian and chilean population are sd",FALSE
+"Carex_curvula","na","","keller and korner 2003","",FALSE
+"Carex_echinata","sd","","heide 2002","australian and norwegian population",TRUE
+"Carex_lachenalii","na","","heide 2002","sd under high temperature",FALSE
+"Carex_maclowiana","na","","heide 2002","sd under high temperature",FALSE
+"Carex_magellanica","na","","heide 2002","sd under high temperature",FALSE
+"Carex_maritima","na","","heide 2002","sd under high temperature",FALSE
+"Carex_paupercula","na","","heide 2002","sd under high temperature",FALSE
+"Carica_papaya","na","","thomas and vince prue 1997","",FALSE
+"Carmpanula_medium","sd","","Wellensiek 1985","",TRUE
+"Carpanthea_pomeridiana","na","golden carpet","mattson and erwin 2005","",FALSE
+"Caryopteris_incana","sd","","thomas and vince prue 1997","",TRUE
+"Caryopteris_mastacanthus","ld","","chouard 1946","",TRUE
+"Catanche_caerula","ld","blue","mattson and erwin 2005","",TRUE
+"Catharanthus_roseus","sd","","thomas and vince prue 1997","",TRUE
+"Celosia_cristata","sd","cockscomb cv bombay","baloch et al 2013","",TRUE
+"Centaurea_cyanus","na","blue boy","mattson and erwin 2005","",FALSE
+"Centaurea_imerialis","ld","","laurie and poesch 1932","",TRUE
+"Centaurea_suaveolens","ld","","laurie and poesch 1932","",TRUE
+"Centranthus_macrosiphon","na","","mattson and erwin 2005","",FALSE
+"Cerastium_regelii","sd","hybrid","heide 1990","",TRUE
+"Cerastium_uniflorum_","na","","keller and korner 2003","",FALSE
+"Ceratochloa_unioloides","na","","cooper and calder 1964","",FALSE
+"Cestrum_diurnum","sd","","thomas and vince prue 1997","",TRUE
+"Cestrum_elegans","na","","thomas and vince prue 1997","",FALSE
+"Cestrum_nocturnum","sld","","sachs 1956","",TRUE
+"Chamaelaucium_uncianatum","sd","","thomas and vince prue 1997","",TRUE
+"Chamecyparis_obtusa","ld","","thomas and vince prue 1997","",TRUE
+"Chamelaucium_uncinatum","sd","","shillo et al 1985","",TRUE
+"Cheiranthus_allionii","ld","","thomas and vince prue 1997","",TRUE
+"Cheiranthus_cheiri","ld","","thomas and vince prue 1997","",TRUE
+"Chenopodium_album","sd","","thomas and vince prue 1997","",TRUE
+"Chenopodium_amaranticolor","sd","","schwabe 1960","some lines",TRUE
+"Chenopodium_aristatum","sd","","thomas and vince prue 1997","",TRUE
+"Chenopodium_ficfolium","na","","wisskirchin 2006","",FALSE
+"Chenopodium_foetidum","na","","thomas and vince prue 1997","",FALSE
+"Chenopodium_glaucum","sd","","wisskirchin 2006","",TRUE
+"Chenopodium_glaucum_x_rubrum","sd","","wisskirchin 2006","",TRUE
+"Chenopodium_murale","ld","","thomas and vince prue 1997","",TRUE
+"Chenopodium_polyspermum","sd","","thomas and vince prue 1997","",TRUE
+"Chenopodium_rubrum","sd","","teltscherova and krekule 1966","",TRUE
+"Chrysanthemum_coccineum","ld","","laurie and poesch 1932","",TRUE
+"Chrysanthemum_indicum","sd","","laurie and poesch 1932","",TRUE
+"Chrysanthemum_leucanthemum","ld","","thomas and vince prue 1997","",TRUE
+"Chrysanthemum_maximum","ld","","laurie and poesch 1932","",TRUE
+"Chrysanthemum_morifolium","sd","","laurie and poesch 1932","",TRUE
+"Chrysanthemum_purpureum","ld","","laurie and poesch 1932","",TRUE
+"Chrysanthemum_segetum","ld","","laurie and poesch 1932","",TRUE
+"Chrysanthemum_superbum","ld","","thomas and vince prue 1997","",TRUE
+"Chtysanthemum_coronarium","ld","","laurie and poesch 1932","",TRUE
+"Cicer_arietinum","ld","","thomas and vince prue 1997","",TRUE
+"Cichorium_intybus","ld","","thomas and vince prue 1997","",TRUE
+"Cicorium_intybus","ld","","thomas and vince prue 1997","",TRUE
+"Cigna_radiata","sd","","thomas and vince prue 1997","",TRUE
+"Cineraria_multiflora","ld","","laurie and poesch 1932","",TRUE
+"Cineraria_stellata","ld","","laurie and poesch 1932","",TRUE
+"Cleome_hasslerana","na","rose queen","mattson and erwin 2005","",FALSE
+"Cleome_hassleriana","ld","","thomas and vince prue 1997","",TRUE
+"Clerodendrum_speciosim","sd","","thomas and vince prue 1997","",TRUE
+"Cobea_scandens","na","white","mattson and erwin 2005","",FALSE
+"Coelus_blumei","na","","thomas and vince prue 1997","",FALSE
+"Coelus_fredericii","sd","","thomas and vince prue 1997","",TRUE
+"Coelus_lanuginosus","ld","","thomas and vince prue 1997","",TRUE
+"Coffea_arabica","sd","red","thomas and vince prue 1997","",TRUE
+"Colchicum_tunicatum","sd","","thomas and vince prue 1997","",TRUE
+"Coleonema_aspalathoides","sd","","heller et al 1994","",TRUE
+"Coleus_blumei","ld","","thomas and vince prue 1997","",TRUE
+"Collinsia_heterophylla","ld","","mattson and erwin 2005","",TRUE
+"Convolulus_sepium","ld","","garner and allard 1923","",TRUE
+"Convolulus_tricolor","ld","","garner and allard 1923","",TRUE
+"Corchorus_capsularis","sd","","thomas and vince prue 1997","",TRUE
+"Corchorus_olitorius","sd","","thomas and vince prue 1997","",TRUE
+"Coreopsis_grandiflora","sld","","thomas and vince prue 1997","",TRUE
+"Coreopsis_lanceolata","ld","early sunrise","damann and lyons 1993","",TRUE
+"Coreopsis_tinctoria","ld","","laurie and poesch 1932","",TRUE
+"Coreopsis_verticillata","ld","","runkle et al 1998","",TRUE
+"Coreposis_grandiflira","ld","","laurie and poesch 1932","",TRUE
+"Coreposis_grandiflora","na","sunray","damann and lyons 1993","",FALSE
+"Coreposis_grandiflora_var_stellaris","ld","","runkle et al 1998","",TRUE
+"Coriandrum_sativum","ld","","thomas and vince prue 1997","",TRUE
+"Cornus_florida","na","","thomas and vince prue 1997","",FALSE
+"Cosmos_bipinnatus","sd","","withrow and biebel 1936","",TRUE
+"Cosmos_sulphureus","sd","","garner and allard 1923","",TRUE
+"Couteloua_curtipendula","id","","thomas and vince prue 1997","",TRUE
+"Crowea_exalata","na","bindelong compac","king et al 2008","crowea responds to light intensity instead of photoperiod",FALSE
+"Cryptomeria_japonica","na","","thomas and vince prue 1997","",FALSE
+"Cuclamen_persicum","na","","laurie and poesch 1932","",FALSE
+"Cucumis_hardwickii","sd","","thomas and vince prue 1997","",TRUE
+"Cucumis_melo","na","","thomas and vince prue 1997","",FALSE
+"Cucumis_sativus","na","","thomas and vince prue 1997","",FALSE
+"Cupressus_arizonica","na","","thomas and vince prue 1997","",FALSE
+"Cyclamen_persicum","na","","thomas and vince prue 1997","",FALSE
+"Cynara_scolymus","ld","","thomas and vince prue 1997","",TRUE
+"Cynodon_dactlyon","ld","","thomas and vince prue 1997","",TRUE
+"Cynodon_dactylon","ld","","thomas and vince prue 1997","",TRUE
+"Cynoglossum_amabile","ld","","laurie and poesch 1932","",TRUE
+"Cynosurus_cristatus","na","","cooper and calder 1964","",FALSE
+"Cyperus_esculentus","id","","thomas and vince prue 1997","",TRUE
+"Cyperus_rotundus","id","","thomas and vince prue 1997","",TRUE
+"Dactylis_glomerata","ld","","thomas and vince prue 1997","",TRUE
+"Dalea_foliosa","ld","some hybrids","baskin and baskin 1998","",TRUE
+"Datura_stramonium","sd","","thomas and vince prue 1997","",TRUE
+"Daucus_carota","na","","thomas and vince prue 1997","",FALSE
+"Delphinium_ajacis","ld","","thomas and vince prue 1997","",TRUE
+"Delphinium_elatum","ld","","thomas and vince prue 1997","",TRUE
+"Delphinium_hybridum","ld","","laurie and poesch 1932","",TRUE
+"Dendranthema_grandiflora","sd","","thomas and vince prue 1997","",TRUE
+"Deschampsia_alpina","yes","","heide 1994","",TRUE
+"Deschampsia_caespitosa","yes","","heide 1994","",TRUE
+"Deschampsia_cespitosa","ld","","thomas and vince prue 1997","",TRUE
+"Deschampsia_flexuosa","yes","","heide 1994","",TRUE
+"Desmondium_intortum","sd","","thomas and vince prue 1997","",TRUE
+"Desmondium_tortousum","sd","","thomas and vince prue 1997","",TRUE
+"Dianthis_caryophyllus","ld","","thomas and vince prue 1997","",TRUE
+"Dianthus_arenarius","ld","","thomas and vince prue 1997","",TRUE
+"Dianthus_barbatus","na","","thomas and vince prue 1997","",FALSE
+"Dianthus_carthusianorum","ld","","thomas and vince prue 1997","",TRUE
+"Dianthus_carypohyllus","na","","laurie and poesch 1932","",FALSE
+"Dianthus_gracilis","ld","","thomas and vince prue 1997","",TRUE
+"Dianthus_graniticus","ld","","thomas and vince prue 1997","",TRUE
+"Dianthus_japonicus","na","","takeda 1996","",FALSE
+"Dianthus_mikadonadeshiko","ld","","takeda 1996","na if not vernalized",TRUE
+"Dianthus_superbus","na","var longicalicinus green","takeda 1996","",FALSE
+"Dicentra_spectabilis","ld","","thomas and vince prue 1997","",TRUE
+"Dichondra_repens","na","","thomas and vince prue 1997","",FALSE
+"Didiscus_caerulea","ld","","laurie and poesch 1932","",TRUE
+"Digitaalis_lanata","na","","thomas and vince prue 1997","",FALSE
+"Digitalis_pirpurea","na","","laurie and poesch 1932","",FALSE
+"Digitalis_purpurea","ld","","thomas and vince prue 1997","",TRUE
+"Dimorphotheca_aurantiaca","ld","","laurie and poesch 1932","",TRUE
+"Dimorphotheca_sinuata","na","mixed colors","mattson and erwin 2005","",FALSE
+"Dinanthus_superbus","ld","","thomas and vince prue 1997","",TRUE
+"Dolichos_biflorus","sd","kulthi bean","garner and allard 1923","",TRUE
+"Dolichos_lablab","sd","","mattson and erwin 2005","",TRUE
+"Draba_aizoides","na","","thomas and vince prue 1997","",FALSE
+"Draba_hispanica","na","","thomas and vince prue 1997","",FALSE
+"Echeveria_carnicolor","sd","","thomas and vince prue 1997","",TRUE
+"Echeveria_derenbergii","sd","","thomas and vince prue 1997","",TRUE
+"Echeveria_elegans","sd","","thomas and vince prue 1997","",TRUE
+"Echeveria_harmsii","sld","","thomas and vince prue 1997","",TRUE
+"Echeveria_setosa","sld","","thomas and vince prue 1997","",TRUE
+"Echinacea_purpurea","sld","","heide 2004","",TRUE
+"Elynya_myosuroides","na","","keller and korner 2003","",FALSE
+"Epilobium_adenocaulon","ld","","thomas and vince prue 1997","",TRUE
+"Epilobium_parviflorum","ld","","thomas and vince prue 1997","",TRUE
+"Erigeron_uniflorum","yes","","keller and korner 2003","",TRUE
+"Erlangea_tomentosa","na","","laurie and poesch 1932","",FALSE
+"Eryngium_variifolium","na","","thomas and vince prue 1997","",FALSE
+"Erysinum_perofskianum","na","","laurie and poesch 1932","",FALSE
+"Escheveria_gracilis","ld","","thomas and vince prue 1997","",TRUE
+"Escheveria_peacockii","ld","","thomas and vince prue 1997","",TRUE
+"Escholtzia_californica","ld","","thomas and vince prue 1997","",TRUE
+"Eschscholzia_californica","ld","sundew","mattson and erwin 2005","",TRUE
+"Eucharis_grandiflora","na","","thomas and vince prue 1997","",FALSE
+"Euphorbia_fulgens","sd","","thomas and vince prue 1997","",TRUE
+"Euphorbia_heterophylla","sd","","garner and allard 1923","early flowering, but no viable seed!",TRUE
+"Euphorbia_lathyris","na","","thomas and vince prue 1997","",FALSE
+"Euphorbia_millii","sd","","thomas and vince prue 1997","",TRUE
+"Euphorbia_pulcherrima","sd","","laurie and poesch 1932","",TRUE
+"Eustoma_grandiflorum","na","","zaccai and edri 2002","vernalisation requirement",FALSE
+"Fagophylum_tataricum","na","","thomas and vince prue 1997","",FALSE
+"Fagopyrum_esculentum","na","","thomas and vince prue 1997","",FALSE
+"Festuca_af._intercedens","ld","","keller and korner 2003","",TRUE
+"Festuca_arundinacea","ld","","thomas and vince prue 1997","",TRUE
+"Festuca_gigantea","na","","cooper and calder 1964","",FALSE
+"Festuca_ovina","na","","cooper and calder 1964","",FALSE
+"Festuca_pratensis","na","","cooper and calder 1964","",FALSE
+"Festuca_rubra","na","","bommer 1961","ref",FALSE
+"Festuca_vivpara","na","","heide 1994","",FALSE
+"Foeniculum_vulgare","ld","","thomas and vince prue 1997","",TRUE
+"Fragaria_x_ananassa","na","","thomas and vince prue 1997","",FALSE
+"Fragaria_x_vesca_semperflorens","na","","thomas and vince prue 1997","",FALSE
+"Freesia_hybrida","sd","sunshine","laurie and poesch 1932","",TRUE
+"Fuschia_hybrida","ld","","thomas and vince prue 1997","",TRUE
+"Gaillardia_grandiflora","ld","","laurie and poesch 1932","",TRUE
+"Gardenia_jasminoides","sd","","thomas and vince prue 1997","",TRUE
+"Gentiana_bavarica","na","","keller and korner 2003","",FALSE
+"Geum_bulgaricum","na","","thomas and vince prue 1997","",FALSE
+"Geum_canadense","na","","thomas and vince prue 1997","",FALSE
+"Geum_macrophyllum","na","","thomas and vince prue 1997","",FALSE
+"Geum_reptans","na","","keller and korner 2003","",FALSE
+"Geum_urbanum","na","","thomas and vince prue 1997","",FALSE
+"Geum_x_intermedium","na","","thomas and vince prue 1997","",FALSE
+"Gladiolus_grandiflorus","sd","","thomas and vince prue 1997","",TRUE
+"Glycine_max","sd","biloxi soybean","thomas and vince prue 1997","",TRUE
+"Gnaphalium_supium","ld","","keller and korner 2003","",TRUE
+"Gossypium_hirsutum","na","","thomas and vince prue 1997","",FALSE
+"Guzmania_monostachys","na","","thomas and vince prue 1997","",FALSE
+"Gypsophila_paniculata","ld","","thomas and vince prue 1997","",TRUE
+"Gypsophila_repens","ld","","armitage and garner 1999","",TRUE
+"Gysophila_elegans","ld","","laurie and poesch 1932","",TRUE
+"Hamelia_patens","ld","","armitage 1995","",TRUE
+"Hardengergia_violaceae","sd","","king 1998","",TRUE
+"Helianthus","sd","sunflower cv elf","baloch et al 2013","",TRUE
+"Helianthus_angustifolius","sd","","garner and allard 1923","",TRUE
+"Helianthus_annus","ld","vanilla ice","mattson and erwin 2005","",TRUE
+"Helianthus_annuus","sd","","thomas and vince prue 1997","",TRUE
+"Helianthus_cucumerifolius","ld","var syriacum","withrow and biebel 1936","",TRUE
+"Helianthus_giganteus","sd","","garner and allard 1923","",TRUE
+"Helianthus_tuberosus","sd","","thomas and vince prue 1997","",TRUE
+"Helichrysum_cassinianum","ld","","thomas and vince prue 1997","",TRUE
+"Helicona_stricta","sd","","criley 1986","",TRUE
+"Heliconia_wagneriana","sd","","criley 1997","",TRUE
+"Helicornia_brasiliensis","sd","","thomas and vince prue 1997","",TRUE
+"Helicornia_stricta","sd","","thomas and vince prue 1997","",TRUE
+"Helipterum_craspedioides","ld","","thomas and vince prue 1997","",TRUE
+"Hemerocallis_fulva","ld","","thomas and vince prue 1997","",TRUE
+"Hibiscus_acetosella","sd","","warner and erwin 2001","",TRUE
+"Hibiscus_aculeatus","ld","","warner and erwin 2001","",TRUE
+"Hibiscus_asper","sd","","warner and erwin 2001","",TRUE
+"Hibiscus_calyphyllus","na","","warner and erwin 2001","",FALSE
+"Hibiscus_cannabinus","sd","","thomas and vince prue 1997","",TRUE
+"Hibiscus_cisplatinus","na","","warner and erwin 2001","",FALSE
+"Hibiscus_costatus","na","","warner and erwin 2001","",FALSE
+"Hibiscus_engleri","sd","","warner and erwin 2001","",TRUE
+"Hibiscus_esculentus","sd","","thomas and vince prue 1997","",TRUE
+"Hibiscus_laevis","ld","","warner and erwin 2001","",TRUE
+"Hibiscus_lunariifolius","na","","warner and erwin 2001","",FALSE
+"Hibiscus_mastersianus","sd","","warner and erwin 2001","",TRUE
+"Hibiscus_meeusei","sd","","warner and erwin 2001","",TRUE
+"Hibiscus_meraukensis","na","","warner and erwin 2001","",FALSE
+"Hibiscus_moscheutos","ld","","runkle et al 1998","",TRUE
+"Hibiscus_nigricaulis","sd","","warner and erwin 2001","",TRUE
+"Hibiscus_physaloides","sd","","warner and erwin 2001","",TRUE
+"Hibiscus_radiatus","sd","","warner and erwin 2001","",TRUE
+"Hibiscus_rosa-sinensis","na","","thomas and vince prue 1997","",FALSE
+"Hibiscus_sabdariffa","sd","","garner and allard 1923","",TRUE
+"Hibiscus_schinzii","sd","","warner and erwin 2001","",TRUE
+"Hibiscus_surattensis","sd","","warner and erwin 2001","",TRUE
+"Hibiscus_syriacus","ld","","garner and allard 1923","",TRUE
+"Hibiscus_trionum","ld","","warner and erwin 2001","",TRUE
+"Hieraceum_floribundum","ld","","thomas and vince prue 1997","",TRUE
+"Hildegardia_barteri","sd","","thomas and vince prue 1997","",TRUE
+"Holcus_halapensis","sd","","garner and allard 1923","shows flowering requirement differences based on point of origin",TRUE
+"Holcus_lanatus","na","","cooper and calder 1964","",FALSE
+"Holcus_sudanensis","sd","","thomas and vince prue 1997","",TRUE
+"Hordenum_marinum","na","","cooper and calder 1964","",FALSE
+"Hordeum_bulbosum","sld","","thomas and vince prue 1997","",TRUE
+"Hordeum_vulgare","ld","","Lane et al 1965","",TRUE
+"Hululus_japonicus","sd","","thomas and vince prue 1997","",TRUE
+"Humulus_lupulus","sd","","thomas and vince prue 1997","",TRUE
+"Hunnemannia_fumariaefolia","ld","","laurie and poesch 1932","",TRUE
+"Hyacinth_orientalis","na","","laurie and poesch 1932","",FALSE
+"Hyaparrhenia_rufa","sd","","thomas and vince prue 1997","",TRUE
+"Hydrangea_hortensis","ld","","laurie and poesch 1932","",TRUE
+"Hyoscyamus_niger","ld","","parker et al 1950","",TRUE
+"Hyosycamus_niger","ld","","thomas and vince prue 1997","",TRUE
+"Hypoestes_aristana","sd","","thomas and vince prue 1997","",TRUE
+"Hypoestes_phyllostachya","sd","","thomas and vince prue 1997","",TRUE
+"Hyptis_brevipes","sd","","zaidan et al 1991","",TRUE
+"Iberis_intermedia","ld","","thomas and vince prue 1997","",TRUE
+"Iberis_umbellata","ld","","laurie and poesch 1932","",TRUE
+"Ilex_aquifolium","na","","thomas and vince prue 1997","",FALSE
+"Impatiens_balsamina","sd","","thomas and vince prue 1997","",TRUE
+"Impatiens_biflora","sd","","garner and allard 1923","",TRUE
+"Impatiens_goughi","sd","","thomas and vince prue 1997","",TRUE
+"Indigofera_hirsuta","sd","","thomas and vince prue 1997","",TRUE
+"Indigofera_spicata","sd","","thomas and vince prue 1997","",TRUE
+"Ipomaea_batatus","sd","","thomas and vince prue 1997","",TRUE
+"Ipomoea_hederaceae","sd","morning glory","garner and allard 1923","",TRUE
+"Ipomoea_nil","sd","","Basset et al 2000","",TRUE
+"Ipomoea_setosa","sd","brazillian morning glory","garner and allard 1923","",TRUE
+"Ipomoea_x_multifida","sd","scarlet","mattson and erwin 2005","",TRUE
+"Ipomopsis_elegans","ld","","laurie and poesch 1932","",TRUE
+"Ipomopsis_rubra","ld","hummingbird mix","mattson and erwin 2005","",TRUE
+"Iris_ensata","sd","","thomas and vince prue 1997","",TRUE
+"Iris_tingitana","ld","","laurie and poesch 1932","",TRUE
+"Izia_maculata","na","","laurie and poesch 1932","",FALSE
+"Jasminium_grandiflorum","ld","","thomas and vince prue 1997","",TRUE
+"Kalanchoe_blossfeldiana","sd","","younis 1954","",TRUE
+"Kalanchoe_glaucescens","sd","","currey and erwin 2010","",TRUE
+"Kalanchoe_manginii","sd","","currey and erwin 2010","",TRUE
+"Kalanchoe_uniflora","sd","","currey and erwin 2010","",TRUE
+"Keinia_articulata","sd","","thomas and vince prue 1997","",TRUE
+"Kniphofia_pfitzeriana","na","","laurie and poesch 1932","",FALSE
+"Koenigia_islandica","ld","","heide and gauslaa 1999","",TRUE
+"Lactuca_sativa","ld","","thomas and vince prue 1997","",TRUE
+"Lactuca_serriola","ld","","thomas and vince prue 1997","",TRUE
+"Lagenaria_siceraria","sd","","thomas and vince prue 1997","",TRUE
+"Lagurus_ovatus","na","","cooper and calder 1964","",FALSE
+"Lathyrus_odoratus","ld","","thomas and vince prue 1997","",TRUE
+"Lechenaultia_biloba","ld","","king et al 2008","",TRUE
+"Lechenaultia_formosa","sd","","king et al 2008","",TRUE
+"Legousia_speculum-veneris","ld","","mattson and erwin 2005","",TRUE
+"Lemna_aequinoctalis","sd","lemna pauciocostata","thomas and vince prue 1997","",TRUE
+"Lemna_aequinoctialis","na","","thomas and vince prue 1997","",FALSE
+"Lemna_gibba","ld","","cleland and briggs 1967","",TRUE
+"Lemna_minor","ld","","thomas and vince prue 1997","",TRUE
+"Lemna_perpusilla","ld","","schuster 1970","",TRUE
+"Lens_culinaris","ld","","thomas and vince prue 1997","",TRUE
+"Leptosiphon_hybrida","ld","","mattson and erwin 2005","",TRUE
+"Leptospermum_scoparium","sd","","thomas and vince prue 1997","",TRUE
+"Leptosune_maritama","ld","","laurie and poesch 1932","",TRUE
+"Lergerstroemia_indica","ld","","thomas and vince prue 1997","",TRUE
+"Lespedeza_cuneata","sd","","thomas and vince prue 1997","",TRUE
+"Lespedeza_stipulaceae","sd","s type strains","thomas and vince prue 1997","",TRUE
+"Leucadendron","sd","Safari Sunset, Rosette, Chameleon, Laurel Yellow, Long Tom, Blush and Jubilee Crown ","hettasch and jacobs 2006","",TRUE
+"Leucanthemopsis_alpina","ld","","keller and korner 2003","",TRUE
+"Liatris_gramnifolia","ld","","garner and allard 1923","",TRUE
+"Liatris_spicata","ld","","thomas and vince prue 1997","",TRUE
+"Lilium_candidum","ld","","thomas and vince prue 1997","",TRUE
+"Lilium_longiflorum","ld","","thomas and vince prue 1997","",TRUE
+"Lilium_longiflorum_erabu","na","","laurie and poesch 1932","",FALSE
+"Lilium_longiflorum_giganteum","na","","laurie and poesch 1932","",FALSE
+"Lilium_longiflorum_harrisii","na","","laurie and poesch 1932","",FALSE
+"Lilium_multiforum","sd","","cooper and calder 1964","",TRUE
+"Lilium_perenne","na","","cooper and calder 1964","",FALSE
+"Limnanthes_douglasii","ld","","mattson and erwin 2005","",TRUE
+"Limonium_sinuata","ld","","thomas and vince prue 1997","",TRUE
+"Linaria_alpha","ld","","keller and korner 2003","",TRUE
+"Linaria_maroccanea","na","fairy bouquet mix","mattson and erwin 2005","",FALSE
+"Linum_perenne","ld","","mattson and erwin 2005","",TRUE
+"Linum_usitatissimum","ld","","thomas and vince prue 1997","",TRUE
+"Litchi_chinesis","na","","thomas and vince prue 1997","",FALSE
+"Lithospermum_arvense","ld","","thomas and vince prue 1997","",TRUE
+"Lobelia_x_speciosa","ld","","runkle et al 1999","vernalisation can substitute ld",TRUE
+"Lolium_lemulentum","ld","","thomas and vince prue 1997","",TRUE
+"Lolium_perenne","sd","","bommer 1961","ref",TRUE
+"Lolium_temulentum","ld","","thomas and vince prue 1997","",TRUE
+"Lolium_westerdoldicum","na","","cooper and calder 1964","",FALSE
+"Luffa_cylindrica","sd","","thomas and vince prue 1997","",TRUE
+"Lunaria_annua","ld","","thomas and vince prue 1997","",TRUE
+"Lupinus_cosentinii","ld","","thomas and vince prue 1997","",TRUE
+"Lupinus_luteus","ld","","thomas and vince prue 1997","",TRUE
+"Luzula_spicata","ld","","keller and korner 2003","",TRUE
+"Lychnis_x_arkwrightii","ld","","thomas and vince prue 1997","",TRUE
+"Lycopersicon_esculentum","na","","thomas and vince prue 1997","some are sd but most are day neutral",FALSE
+"Lysimachia_nemorum","ld","","thomas and vince prue 1997","",TRUE
+"Madia_elegans","ad","","thomas and vince prue 1997","",TRUE
+"Malus_sylverstris","na","","thomas and vince prue 1997","",FALSE
+"Malva_verticillata","sd","","thomas and vince prue 1997","",TRUE
+"Malvaviscus_conzatti","na","","garner and allard 1923","",FALSE
+"Mamillaria_longicoma","sd","","thomas and vince prue 1997","",TRUE
+"Manihot_esculenta","ld","","thomas and vince prue 1997","",TRUE
+"Mathiola_incana","ld","","laurie and poesch 1932","",TRUE
+"Matricaria_capensis","ld","","laurie and poesch 1932","",TRUE
+"Matthiola_incana","ld","","thomas and vince prue 1997","",TRUE
+"Matthiola_longipetala","na","starlight sensation","mattson and erwin 2005","",FALSE
+"Medicago_minima","ld","winter strains","thomas and vince prue 1997","",TRUE
+"Medicago_satica","ld","","thomas and vince prue 1997","",TRUE
+"Melandrium_album","ld","","thomas and vince prue 1997","",TRUE
+"Melandrium_rubrum","na","","thomas and vince prue 1997","",FALSE
+"Melilotus_alba","ld","","thomas and vince prue 1997","",TRUE
+"Melilotus_indica","ld","","thomas and vince prue 1997","",TRUE
+"Mentha_citrata","ld","","thomas and vince prue 1997","",TRUE
+"Mentha_piperita","ld","","thomas and vince prue 1997","",TRUE
+"Mentha_spicata","ld","","thomas and vince prue 1997","",TRUE
+"Microstegium_vimineum","sd","","novy et al 2012","",TRUE
+"Mikania_scandens","id","","thomas and vince prue 1997","",TRUE
+"Mimulus_alsinoides","ld","","kooyers et al 2017","",TRUE
+"Mimulus_guttans","ld","","firedman and willis 2011","",TRUE
+"Mina_lobata","sd","","mattson and erwin 2005","",TRUE
+"Minuartia_sedoides","na","","keller and korner 2003","",FALSE
+"Morua_nigra","na","","thomas and vince prue 1997","",FALSE
+"Muscari_bortyoides","na","","laurie and poesch 1932","",FALSE
+"Myosotis_hispida","ld","","thomas and vince prue 1997","",TRUE
+"Myosotis_scorpioides","na","","armitage and garner 1999","",FALSE
+"Narcissus_poeticus_","na","","laurie and poesch 1932","",FALSE
+"Narcissus_psuedonarcissis","na","","laurie and poesch 1932","",FALSE
+"Narcissus_tazetta","na","","laurie and poesch 1932","",FALSE
+"Nemophila_mensiesii","na","","mattson and erwin 2005","",FALSE
+"Nentonia_wightii","sd","","thomas and vince prue 1997","",TRUE
+"Nerine_flexuosa","na","","thomas and vince prue 1997","",FALSE
+"Nicotiana_sylvestris","ld","","thomas and vince prue 1997","",TRUE
+"Nicotiana_tabacum","sd","","thomas and vince prue 1997","intermediate day plant?",TRUE
+"Nicotinata_tabacum","sd","","thomas and vince prue 1997","",TRUE
+"Nigella_damascena","ld","","thomas and vince prue 1997","",TRUE
+"Ocimum_basilicum","id","","thomas and vince prue 1997","",TRUE
+"Oenothera_biennis","ld","","thomas and vince prue 1997","",TRUE
+"Oenothera_lamarckiana","ld","","thomas and vince prue 1997","",TRUE
+"Oenothera_longiflora","ld","","thomas and vince prue 1997","",TRUE
+"Oenothera_pallida","ld","wedding bells","mattson and erwin 2005","",TRUE
+"Oenothera_parviflora","ld","","thomas and vince prue 1997","",TRUE
+"Oenothera_rosea","ld","","thomas and vince prue 1997","",TRUE
+"Oenothera_sueveolens","ld","","thomas and vince prue 1997","",TRUE
+"Olea_europaea","na","","thomas and vince prue 1997","",FALSE
+"Oreganum_syriacum","ld","","thomas and vince prue 1997","",TRUE
+"Ornithogalum_lacteum","na","","laurie and poesch 1932","ambiphotoperiodic plant (inhibited by intermediate days)",FALSE
+"Ornithogalumarabicum","na","","thomas and vince prue 1997","",FALSE
+"Oryza_sativa","na","","thomas and vince prue 1997","",FALSE
+"Oryzopsis_miliacea","ld","","thomas and vince prue 1997","",TRUE
+"Osteospermum_jucunndum","ld","","thomas and vince prue 1997","",TRUE
+"Oxalis_adenophylla","ld","","thomas and vince prue 1997","",TRUE
+"Oxalis_dellei","ld","","thomas and vince prue 1997","",TRUE
+"Oxalis_pes-caprae","ld","","thomas and vince prue 1997","",TRUE
+"Oxyda_digyna","sld","","heide 2005","",TRUE
+"Oxypetalum_caerulea","na","blue star","mattson and erwin 2005","",FALSE
+"Oxyria_digyna","ld","","keller and korner 2003","",TRUE
+"Panicum_maximum","sd","","thomas and vince prue 1997","",TRUE
+"Panicum_miliaceum","sd","","thomas and vince prue 1997","",TRUE
+"Panicum_virgatum","sd","","castro et al 2011","but weakly so",TRUE
+"Papaver_somniferum","ld","princeton strain","thomas and vince prue 1997","",TRUE
+"Papver_rhoeas","ld","","laurie and poesch 1932","",TRUE
+"Paspalum_dilatatum","id","","thomas and vince prue 1997","",TRUE
+"Paspalum_plicatum","sd","","thomas and vince prue 1997","",TRUE
+"Paspalum_thunbergii","sd","","thomas and vince prue 1997","",TRUE
+"Paspalum_urvillei","sd","","thomas and vince prue 1997","",TRUE
+"Pastinaca_sativa","na","","thomas and vince prue 1997","",FALSE
+"Pelargonium_x_hortorum","na","","thomas and vince prue 1997","",FALSE
+"Pelargonium_zonale","na","","laurie and poesch 1932","",FALSE
+"Pennisetum_purpuerum","sd","","thomas and vince prue 1997","",TRUE
+"Pennisetum_typhoides","sd","","thomas and vince prue 1997","",TRUE
+"Pentas_lanceolata","ld","","thomas and vince prue 1997","",TRUE
+"Perilla_ocymoides","sd","","schwabe 1959","",TRUE
+"Persicaria_lapathifolia_ssp._lapathifolia","sd","hybrids","wisskirchin 2006","",TRUE
+"Persicaria_lapathifolia_ssp._pallida","na","","wisskirchin 2006","",FALSE
+"Persicaria_lapthifolia_ssp._brittingeri","sd","k type strain","wisskirchin 2006","",TRUE
+"Petunia_hybrida","ld","","Lane et al 1965","",TRUE
+"Phacelia_campanularia","na","","mattson and erwin 2005","",FALSE
+"Phacelia_tanacetifolia","ld","","mattson and erwin 2005","",TRUE
+"Phalaris_arundinacea","na","","cooper and calder 1964","",FALSE
+"Phalaris_arundinaceae","ld","","thomas and vince prue 1997","",TRUE
+"Phalaris_minor","na","","cooper and calder 1964","",FALSE
+"Phalaris_tuberosa","na","","cooper and calder 1964","",FALSE
+"Pharbitis_nil","sd","","teltscherova and krekule 1966","",TRUE
+"Pharlaris_canariensis","na","","cooper and calder 1964","",FALSE
+"Phaseolus_lunatus","na","","thomas and vince prue 1997","",FALSE
+"Phaseolus_vulgaris","sd","","thomas and vince prue 1997","",TRUE
+"Phaseolus_vulgaris_","ad","","thomas and vince prue 1997","",TRUE
+"Phippsia_algida","ld","","heide 1992","",TRUE
+"Phleum_alpinium_var_calcareus","na","","heide 1994","",FALSE
+"Phleum_nodosum","sd","","cooper and calder 1964","",TRUE
+"Phleum_pratense","ld","","cooper and calder 1964","",TRUE
+"Phlox_paniculata","ld","","thomas and vince prue 1997","",TRUE
+"Physalis_peruviana","sd","","heinze and midasch 1991","",TRUE
+"Pistia_stratioides","na","","thomas and vince prue 1997","",FALSE
+"Pisum_sativum","ld","","thomas and vince prue 1997","",TRUE
+"Pisum_sativus","ld","","thomas and vince prue 1997","",TRUE
+"Plantago_lanceolata","ld","","snyder 1948","",TRUE
+"Plantago_major_ssp._pallida","ld","","wisskirchin 2006","",TRUE
+"Plectranthis_fruticosus","id","","thomas and vince prue 1997","",TRUE
+"Plumbago_indica","sd","","nitsch 1965","",TRUE
+"Poa_alpigena","sld","","thomas and vince prue 1997","",TRUE
+"Poa_alpina","na","","cooper and calder 1964","",FALSE
+"Poa_annua","sld","","thomas and vince prue 1997","different ecotypes show different photoperiod",TRUE
+"Poa_arctica","sld","","thomas and vince prue 1997","",TRUE
+"Poa_bulbosa","ld","","thomas and vince prue 1997","",TRUE
+"Poa_laxa","ld","","keller and korner 2003","",TRUE
+"Poa_nemoralis","na","","cooper and calder 1964","",FALSE
+"Poa_palustris","na","","cooper and calder 1964","",FALSE
+"Poa_pratensis","sd","","peterson and loomis 1948","",TRUE
+"Poa_trivialis","na","","cooper and calder 1964","",FALSE
+"Polemonium_viscosum","ld","","mattson and erwin 2005","",TRUE
+"Polyganum_sp","sd","smartweed","garner and allard 1923","",TRUE
+"Polypogon_monspeliensis","na","","cooper and calder 1964","",FALSE
+"Portulaca_oleracea","sd","","thomas and vince prue 1997","",TRUE
+"Potentilla_frigida","yes","","keller and korner 2003","",TRUE
+"Primula_malacoides","sd","","thomas and vince prue 1997","",TRUE
+"Primula_obconica","na","","laurie and poesch 1932","",FALSE
+"Prunus_amygdalus","na","","thomas and vince prue 1997","",FALSE
+"Pseudotsuga_spp","na","biennial strain","thomas and vince prue 1997","",FALSE
+"Psophocarpus_tertagonolobus","sd","","thomas and vince prue 1997","",TRUE
+"Punica_granatum_nana","sd","","thomas and vince prue 1997","",TRUE
+"Pycnosorus_thompsonianus","ld","","krisantini et al 2015","",TRUE
+"Pyrethrum_cinerariifolium","na","","thomas and vince prue 1997","",FALSE
+"Pyrus_communis","na","","thomas and vince prue 1997","",FALSE
+"Quamoclit_pennata","sd","","garner and allard 1923","",TRUE
+"Ranunculus_asiaticus","ld","","thomas and vince prue 1997","",TRUE
+"Ranunculus_ficaria","na","","thomas and vince prue 1997","",FALSE
+"Ranunculus_glacialis","na","","keller and korner 2003","",FALSE
+"Ranunculus_penicillatus","na","","thomas and vince prue 1997","",FALSE
+"Ranunculus_sceleratus","ld","","wisskirchin 2006","",TRUE
+"Ranunculus_scleratus","ld","","thomas and vince prue 1997","",TRUE
+"Raphanus_saticus","ld","","thomas and vince prue 1997","",TRUE
+"Rheum_rhaponticum","na","","thomas and vince prue 1997","",FALSE
+"Rhipsalidopsis_gaertneri","sld","crimson giant","boyle 1991","",TRUE
+"Rhodanthe_floribunda","ld","","krisantini et al 2015","",TRUE
+"Rhododendron_obtusum","na","","thomas and vince prue 1997","",FALSE
+"Rhododendron_spp","sd","","thomas and vince prue 1997","",TRUE
+"Ribes_nigrum","sd","","thomas and vince prue 1997","",TRUE
+"Ribes_rubrum","ld","","chouard 1946","",TRUE
+"Ricinus_communis","sd","","thomas and vince prue 1997","",TRUE
+"Rorippa_paulstris","ld","","wisskirchin 2006","",TRUE
+"Rosa_gallica","sd","","thomas and vince prue 1997","",TRUE
+"Rosa_rugosa","sd","","thomas and vince prue 1997","",TRUE
+"Rottboellia_cochincinesis","na","","millhollon and burner 1993","Group 3, 4 and 5 biotypes, sd in thomas and vince prue 1997",FALSE
+"Rubus_idaeus","sd","","thomas and vince prue 1997","",TRUE
+"Rudbeckia_bicolor","ld","","thomas and vince prue 1997","",TRUE
+"Rudbeckia_fulgida","ld","","runkle et al 1998","",TRUE
+"Rudbeckia_hirta","ld","","thomas and vince prue 1997","",TRUE
+"Rudbeckia_lacinata","ld","","thomas and vince prue 1997","",TRUE
+"Rudbeckia_newmani","ld","","thomas and vince prue 1997","",TRUE
+"Rudbeckia_nitida","ld","","thomas and vince prue 1997","",TRUE
+"Rudbeckia_speciosa","ld","","thomas and vince prue 1997","",TRUE
+"Rumex_acetosella","ld","","garner and allard 1923","",TRUE
+"Rumex_paulstris","ld","","wisskirchin 2006","",TRUE
+"Saccharum_spontaneum","id","","thomas and vince prue 1997","",TRUE
+"Saintpaulia_ionantha","na","","thomas and vince prue 1997","",FALSE
+"Salpiglossis_sinuata","ld","","laurie and poesch 1932","",TRUE
+"Salsola_komarovii","id","","takeno et al 1994","",TRUE
+"Salsola_volkensii","sd","","thomas and vince prue 1997","",TRUE
+"Salsolva_inermis","sd","","thomas and vince prue 1997","",TRUE
+"Salvia_farinaceae","ld","strata","mattson and erwin 2005","",TRUE
+"Salvia_occidentalis","sd","","bhargava 1965","",TRUE
+"Salvia_riparia","sd","","thomas and vince prue 1997","",TRUE
+"Samolus_parviflorus","ld","","thomas and vince prue 1997","",TRUE
+"Santedeschia_aethiopica","na","","laurie and poesch 1932","",FALSE
+"Sanvitalia_procumbens","sd","","mattson and erwin 2005","",TRUE
+"Saxifraga_bryoides","ld","","keller and korner 2003","",TRUE
+"Saxifraga_hypnoides","ld","","thomas and vince prue 1997","",TRUE
+"Saxifraga_oppositifolia","na","","keller and korner 2003","",FALSE
+"Saxifraga_rotundifolia","na","","thomas and vince prue 1997","",FALSE
+"Saxifraga_seguieri","na","","keller and korner 2003","",FALSE
+"Scabiosa_atropurpurea","ld","","laurie and poesch 1932","",TRUE
+"Scabiosa_canescens","ld","","thomas and vince prue 1997","",TRUE
+"Scabiosa_succisa","sd","","chouard 1960","",TRUE
+"Schismus_arabicus","ld","","thomas and vince prue 1997","also gutterman 1995",TRUE
+"Schizanthus_pinnatus","ld","","laurie and poesch 1932","",TRUE
+"Schizanthus_x_wisetonensis","ld","","thomas and vince prue 1997","",TRUE
+"Schlumbergera_truncata","na","","thomas and vince prue 1997","",FALSE
+"Scrophularia_alata","ld","","thomas and vince prue 1997","",TRUE
+"Scrophularia_arguta","ld","","thomas and vince prue 1997","",TRUE
+"Scrophularia_cernalis","ld","","thomas and vince prue 1997","",TRUE
+"Scrophularia_peregrina","na","","thomas and vince prue 1997","",FALSE
+"Scrophularia_umbrosa","na","","thomas and vince prue 1997","",FALSE
+"Scrophularia_vernalis","na","","thomas and vince prue 1997","",FALSE
+"Secale_cereale","ld","","thomas and vince prue 1997","",TRUE
+"Secale_cereale_","ld","","thomas and vince prue 1997","",TRUE
+"Sechium_edule","sd","","thomas and vince prue 1997","",TRUE
+"Sedum_alphestre","ld","","keller and korner 2003","",TRUE
+"Sedum_bellum","lsd","","thomas and vince prue 1997","",TRUE
+"Sedum_ellacombianum","ld","","thomas and vince prue 1997","",TRUE
+"Sedum_spectabile","ld","","thomas and vince prue 1997","",TRUE
+"Sedum_spurium_coccineum","ld","","thomas and vince prue 1997","",TRUE
+"Sedum_telephium","ld","","thomas and vince prue 1997","",TRUE
+"Selosia_cristata","sd","","thomas and vince prue 1997","",TRUE
+"Senecio_cruentus","na","","thomas and vince prue 1997","",FALSE
+"Senecio_vulgaris","na","","thomas and vince prue 1997","",FALSE
+"Sesamum_indicum","sd","","thomas and vince prue 1997","",TRUE
+"Setaria_italica","sd","","thomas and vince prue 1997","",TRUE
+"Setaria_moharica","sd","","thomas and vince prue 1997","",TRUE
+"Setaria_sphacelata","ld","","thomas and vince prue 1997","",TRUE
+"Setaria_verticillata","ad","","thomas and vince prue 1997","",TRUE
+"Setaria_viridis","sd","","thomas and vince prue 1997","",TRUE
+"Setatia_glauca","sd","","thomas and vince prue 1997","",TRUE
+"Shondrilla_juncea","ld","","thomas and vince prue 1997","",TRUE
+"Sibbaldia_procumbens","yes","","keller and korner 2003","",TRUE
+"Silene_alba","ld","","thomas and vince prue 1997","",TRUE
+"Silene_armeria","ld","","thomas and vince prue 1997","",TRUE
+"Silene_coeli-rosa","ld","","thomas and vince prue 1997","",TRUE
+"Silene_dioica","na","","thomas and vince prue 1997","",FALSE
+"Silene_italica","na","","thomas and vince prue 1997","",FALSE
+"Silene_latifolia","sd","","wang 2007","",TRUE
+"Silene_nutans","na","","thomas and vince prue 1997","",FALSE
+"Silene_otites","ld","","thomas and vince prue 1997","",TRUE
+"Simmondsia_chinesis","na","","thomas and vince prue 1997","",FALSE
+"Sinapis_alba","sld","","kinet 1972","",TRUE
+"Soja_max_var_biloxi","sd","","parker et al 1946","",TRUE
+"Solanum_melongena","na","","thomas and vince prue 1997","",FALSE
+"Solanum_tuberosum","ld","","thomas and vince prue 1997","",TRUE
+"Solidago_canadensis","id","","thomas and vince prue 1997","",TRUE
+"Solidago_sempervirens","sd","","thomas and vince prue 1997","",TRUE
+"Solidago_shortii","sd","","walck et al 1999","",TRUE
+"Sonchus_oleraceus","ld","","thomas and vince prue 1997","",TRUE
+"Sorghum_bicolor","sd","","thomas and vince prue 1997","",TRUE
+"Sorghum_halepense","sd","","thomas and vince prue 1997","",TRUE
+"Spergularia_diandra","ld","","gutterman 1997","",TRUE
+"Spiraea_cantonesis","na","","thomas and vince prue 1997","",FALSE
+"Spirodela_aequinoctialis","ld","","thomas and vince prue 1997","",TRUE
+"Spirodela_paucicostata","ld","","thomas and vince prue 1997","",TRUE
+"Spirodela_polyrrhiza","na","","thomas and vince prue 1997","",FALSE
+"Spirodela_punctata","ld","","thomas and vince prue 1997","",TRUE
+"Stephanitis_floribunda","ld","","thomas and vince prue 1997","",TRUE
+"Stephanotis_floribunda","ld","","kano et al 1993","",TRUE
+"Stevia_serrata","sd","","laurie and poesch 1932","",TRUE
+"Stipa_barbata","ld","","thomas and vince prue 1997","",TRUE
+"Strelitsia_reginae","na","","thomas and vince prue 1997","",FALSE
+"Streptocarpus_wendlandii","yes","","hess 1959","",TRUE
+"Streptocarpus_x_hybridus","na","","thomas and vince prue 1997","",FALSE
+"Stylosanthes_guianensis","ldsd","","trongkongsin 1988","",TRUE
+"Stylosanthes_humilis","sd","","thomas and vince prue 1997","",TRUE
+"Suaeda_salsa","sd","","kefu et al 2002","",TRUE
+"Symhapndra_hoffmanni","sld","","thomas and vince prue 1997","",TRUE
+"Syringa_vulgaris","na","","chouard 1946","",FALSE
+"Tagete_patula","sd","","thomas and vince prue 1997","",TRUE
+"Tagetes_erecta","sd","african marigold cv crush","baloch et al 2013","",TRUE
+"Tagetes_patula","sd","french marigold cv orange gate","baloch et al 2013","",TRUE
+"Tagetes_tenuifolia","sd","","thomas and vince prue 1997","",TRUE
+"Tephrosia_candida","id","","thomas and vince prue 1997","",TRUE
+"Teucrium_scorodonia_c","ld","","thomas and vince prue 1997","",TRUE
+"Thalaspi_arvensis","ld","","thomas and vince prue 1997","",TRUE
+"Thlaspi_perfoliatum","na","","thomas and vince prue 1997","",FALSE
+"Thuja_plicata","na","","thomas and vince prue 1997","",FALSE
+"Thunbergia_alata","na","","mattson and erwin 2005","",FALSE
+"Tithonia_rotundifolia","sd","","garner and allard 1923","",TRUE
+"Tithonia_speciosa","sd","","withrow and biebel 1936","",TRUE
+"Torenia_fournieri","sd","","thomas and vince prue 1997","",TRUE
+"Trachelium_caeruleum","ld","","thomas and vince prue 1997","",TRUE
+"Trifolium_humilis","sd","","thomas and vince prue 1997","",TRUE
+"Trifolium_pratense","ld","","thomas and vince prue 1997","",TRUE
+"Trifolium_repens","sld","hybrids","thomas 1961","",TRUE
+"Trifolium_semipilosum","ld","","ison and parson 1992","weak ld response",TRUE
+"Trifolium_subterraneum","ld","","thomas and vince prue 1997","",TRUE
+"Trifolium_usambarense","id","","thomas and vince prue 1997","",TRUE
+"Trigonella_arabica","ld","","thomas and vince prue 1997","",TRUE
+"Trigonella_coelesyriaca","ld","","thomas and vince prue 1997","",TRUE
+"Trigonella_monspeliaca","ld","","thomas and vince prue 1997","",TRUE
+"Trigonella_spinosa","ld","","thomas and vince prue 1997","",TRUE
+"Trigonella_stellata","ld","","thomas and vince prue 1997","",TRUE
+"Triticum_aestevium","ld","","teltscherova and krekule 1966","",TRUE
+"Triticum_aestivum","ld","","thomas and vince prue 1997","",TRUE
+"Trofolium_masaiense","ld","","thomas and vince prue 1997","",TRUE
+"Tulipa_gesneriana","na","","laurie and poesch 1932","",FALSE
+"Ulmus_glabra","ld","","sceglova and leisle 1954","",TRUE
+"Utricularia_inflexa","sd","","thomas and vince prue 1997","",TRUE
+"Vaccinium_angustifolium","sd","","thomas and vince prue 1997","",TRUE
+"Vaccinium_corymbosum","sd","","thomas and vince prue 1997","",TRUE
+"Verbascum_phoeniceum","na","","mattson and erwin 2005","",FALSE
+"Viburnum_burkwoodii","na","","thomas and vince prue 1997","",FALSE
+"Viburnum_carlesii","na","","thomas and vince prue 1997","",FALSE
+"Vicia_faba","ld","","thomas and vince prue 1997","there are also some na genotypes",TRUE
+"Vigna_unguiculata","sd","","thomas and vince prue 1997","",TRUE
+"Viguiera_multiflora","ld","","mattson and erwin 2005","",TRUE
+"Viola_odorata","sd","","thomas and vince prue 1997","",TRUE
+"Viola_papilonacea","na","","garner and allard 1923","",FALSE
+"Viola_tricolor","ld","","withrow and benedict 1936","",TRUE
+"Viola_x_wittrockiana","ld","","adams et al 1997","",TRUE
+"Viscaria_alba","ld","","thomas and vince prue 1997","",TRUE
+"Vitris_cinifera","na","","thomas and vince prue 1997","",FALSE
+"Vrisea_splendens","na","","thomas and vince prue 1997","",FALSE
+"Wolffia_arrhiza","lsd","","thomas and vince prue 1997","",TRUE
+"Wolffia_microscopa","sd","","venketarman et al 1970","",TRUE
+"Xanthisma_texanum","yes","","teltscherova and krekule 1966","",TRUE
+"Xanthium_pennsylvanicum","sd","","schwabe 1961","",TRUE
+"Xanthium_saccharatum","sd","","parker et al 1946","",TRUE
+"Xanthium_strumarium_","sd","","thomas and vince prue 1997","",TRUE
+"Xanthium_strumarium","sd","","salisbury 1981","",TRUE
+"Zantedeschia_aethiopica","na","","thomas and vince prue 1997","",FALSE
+"Zea_mays","na","","thomas and vince prue 1997","",FALSE
+"Zinnia_elegans","sd","","thomas and vince prue 1997","",TRUE
+"Zinnia_mexicana","na","","laurie and poesch 1932","",FALSE
+"Zosia_japonica","sd","","thomas and vince prue 1997","",TRUE
+"Zosia_matrella","sd","","thomas and vince prue 1997","",TRUE
+"Zosia_tenuifolia","sd","","thomas and vince prue 1997","",TRUE
+"Aquilegia_canadensis","sd",NA,NA,NA,TRUE
+"Vinca_minor","na",NA,NA,NA,FALSE
+"Betula_pendula","ld",NA,"wareing 1960",NA,TRUE
+"Fagus_sylvatica","na",NA,"wareing 1956",NA,FALSE
+"Fragaria_vesca","na",NA,"chouard 1946",NA,FALSE
+"Persicaria_lapathifolia","sd",NA,"Wisskirchen 2006",NA,TRUE
+"Pinus_sylvestris","ld",NA,"wareing 1950",NA,TRUE
+"Plantago_major","ld",NA,"meijer and van der veen 1957",NA,TRUE
