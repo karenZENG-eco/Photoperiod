@@ -57,6 +57,9 @@ Effect of Photoperiod Sensitivity on First Flowering Date over time
 Analyse data
 
 ```{r include=FALSE}
+
+write.csv(data, "./outputs/graphdata.csv")
+
 source("./R/getPhotoFFD.R")
 
 Photo.FFD.Results <- getPhotoFFD(data) #Analyse data
