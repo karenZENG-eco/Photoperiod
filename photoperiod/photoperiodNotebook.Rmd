@@ -58,7 +58,7 @@ Analyse data
 
 ```{r include=FALSE}
 
-write.csv(data, "./outputs/graphdata.csv")
+write.csv(data, "./graphdata.csv")
 
 source("./R/getPhotoFFD.R")
 

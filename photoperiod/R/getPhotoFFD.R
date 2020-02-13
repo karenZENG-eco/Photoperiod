@@ -40,36 +40,29 @@ aic.1 <- AIC(lm.1)
 
 
 #graph the datapoints, comparing photoperiod sensitivite and not photoperiod sensitive
-photo_plot <- ggplot(data)+
-  geom_point(aes(y=doy, year, colour = photoperiod_sensitive), shape = 19,alpha = 0.7)+ #points that are shape 1 (hollow circle) and jittered
-  geom_smooth(aes(y=doy, year, group = photoperiod_sensitive), method = "glm", se=F, size= 1.5, colour = "white")+ #white outline
-  geom_smooth(aes(y=doy, year, colour = photoperiod_sensitive), method = "glm", se=F, size = 1)+ #trendline
+write.csv(data, "./outputs/graphdata.csv")
+
+
+photo_plot <- 
+  ggplot(data)+
+  geom_point(aes(y=doy, year, colour = photoperiod_sensitive), size = 2, alpha = 0.4)+ #points that are shape 1 (hollow circle) and jittered
+  # geom_smooth(aes(y=doy, year, group = photoperiod_sensitive), method = "lm", se=F, size= 1.5, colour = "white")+ #white outline
+  geom_smooth(aes(y=doy, year, colour = photoperiod_sensitive), method = "lm", se=F, size = 2)+ #trendline
   xlab("Year")+
+  ylim(0, 400)+
+  xlim(1950, 2017)+
   ylab("Average First Flowering Day")+
-  guides(color = guide_legend(title = "Photoperiod Sensitivity",reverse = TRUE))+
+  guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE))+
   scale_colour_manual(values=mypalette)+
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
         axis.line = element_line(colour = "black"),
         axis.text = element_text(size = 10),
-        axis.title = element_text(size = 15,
-        face  = "bold"), plot.margin = margin(10, 10, 10, 10)
-  )
-
-species_plot <- ggplot(data)+
-  geom_point(aes(y=doy, year, colour = species, alpha = 0.5))+
-  scale_shape_manual(values = 1)+
-  geom_smooth(aes(y=doy, year, colour = species), method = "glm")+
-  xlab("Year")+
-  ylab("Average First Flowering Day")
-
-speciesxphoto_plot <- ggplot(data)+
-  geom_point(aes(y=doy, year, colour = species, alpha = 0.5))+
-  scale_shape_manual(values = 1)+
-  geom_smooth(aes(y=doy, year, group = species, colour = photoperiod_sensitive), method = "glm")+
-  xlab("Year")+
-  ylab("Average First Flowering Day")
+        axis.title = element_text(size = 15, face  = "bold"),
+        legend.position = "none")+
+  geom_label_repel(x = 2017, y = 110, label = "Insensitive", colour = "#0072B2")+
+  geom_label_repel(x = 2017, y = 130, label = "Sensitive", colour = "#E69F00")
 
 source_plot <- ggplot(data)+
   geom_point(aes(y=doy, year, colour = source, alpha = 0.5))+
