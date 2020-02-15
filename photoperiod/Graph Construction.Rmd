@@ -8,7 +8,7 @@ Packages
 library(ggplot2)
 library(ggthemes)
 library(ggrepel)
-
+library(magick)
 
 ```
 
@@ -20,15 +20,14 @@ data <- read.csv("./graphdata.csv")
 
 Save Code
 ```{r}
-
+ggsave(filename = "./figures/photoplot3.png", scale = 0.8, width = 7.2, height = 10.8)
 ```
 
 Global Settings
 ```{r}
 mypalette <- c("#0072B2","#E69F00")
-mysize <- 2
-myshape <- 4 #cross
-myalpha <- 0.2
+testimage <- image_read("./figures/bestpokemon.png")
+
 ```
 
 
@@ -39,17 +38,19 @@ photo_plot1 <-
   geom_count( alpha = 0.2)+
   geom_smooth(aes(group = photoperiod_sensitive), method = "lm", se=F, size = 2, colour ="gray")+ #trendline
   geom_smooth(method = "lm", se=F, size = 1)+ #trendline
+#  geom_text_repel(label = c("toot","doot"))+
+  annotation_raster(testimage, -Inf, Inf, -Inf, Inf) +
   xlab("Year")+
-  ylab("Average First Flowering Day (Months)")+
+  ylab("Average First Flowering (Day of Year)")+
   guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE))+
   scale_colour_manual(values=mypalette)+
   theme_clean()+
   theme(legend.position = "none")+
-  scale_y_continuous(breaks=c(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365),
-                     labels = c("J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D", 365),
+  scale_y_continuous(breaks=c(0,59, 151, 243, 334, 365),
                      limits = c(0, 365), position = "right",
-                     sec.axis = sec_axis(~ . * 1, name = "Average First Flowering Day (days)",
-                                         breaks = c(0, 100, 200, 300, 365)))+
+                     sec.axis = sec_axis(~ . * 1, name = "Average First Flowering",
+                                         breaks = c(0, 59, 151, 243, 334, 365),
+                     labels = c("","Spring","Summer","Autumn", "Winter", "")))+
   scale_x_continuous(breaks=c(1950, 1960, 1970, 1980, 1990, 2000, 2010, 2017), limit = c(1945, 2030))
 
   photo_plot1
