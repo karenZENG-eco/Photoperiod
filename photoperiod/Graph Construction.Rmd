@@ -8,7 +8,10 @@ Packages
 library(ggplot2)
 library(ggthemes)
 library(ggrepel)
+library(pBrackets)
+library(directlabels)
 library(magick)
+
 
 ```
 
@@ -20,13 +23,19 @@ data <- read.csv("./graphdata.csv")
 
 Save Code
 ```{r}
-ggsave(filename = "./figures/photoplot3.png", scale = 0.8, width = 7.2, height = 10.8)
+ggsave(filename = "./figures/photoplot8.png", scale = 0.8, width = 7.2, height = 10.8)
 ```
 
 Global Settings
 ```{r}
 mypalette <- c("#0072B2","#E69F00")
 testimage <- image_read("./figures/bestpokemon.png")
+
+winter1.rect<- data.frame(xmin = -Inf, xmax = Inf, ymin = 0, ymax = 79)
+spring.rect<- data.frame(xmin = -Inf, xmax = Inf, ymin = 79, ymax = 172)
+summer.rect<- data.frame(xmin = -Inf, xmax = Inf, ymin = 172, ymax = 265)
+autumn.rect<- data.frame(xmin = -Inf, xmax = Inf, ymin = 265, ymax = 355)
+winter2.rect<- data.frame(xmin = -Inf, xmax = Inf, ymin = 355, ymax = 365)
 
 ```
 
@@ -36,23 +45,88 @@ Graph 1
 photo_plot1 <-
   ggplot(data, aes(x = year, y=doy, colour = photoperiod_sensitive))+
   geom_count( alpha = 0.2)+
-  geom_smooth(aes(group = photoperiod_sensitive), method = "lm", se=F, size = 2, colour ="gray")+ #trendline
-  geom_smooth(method = "lm", se=F, size = 1)+ #trendline
-#  geom_text_repel(label = c("toot","doot"))+
-  annotation_raster(testimage, -Inf, Inf, -Inf, Inf) +
   xlab("Year")+
   ylab("Average First Flowering (Day of Year)")+
+  
+geom_rect(data = winter1.rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), colour = "white", fill="blue", alpha=0.1, size = 2, inherit.aes = FALSE)+
+ geom_rect(data =spring.rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), colour = "white", fill="green", alpha=0.1, size = 2, inherit.aes = FALSE)+
+ geom_rect(data = summer.rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), colour = "white", fill="red", alpha=0.1, size = 2, inherit.aes = FALSE)+
+ geom_rect(data = autumn.rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), colour = "white", fill="yellow", alpha=0.1, size = 2, inherit.aes = FALSE)+
+ geom_rect(data = winter2.rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), colour = "white", fill="blue", alpha=0.1, size = 2, inherit.aes = FALSE)+
+  
+geom_text(x = 1946, y = 89, label = " SPRING", color = "black", size = 4)+  
+ geom_text(x = 1946, y = 182, label = "SUMMER", color = "black", size = 4)+ 
+ geom_text(x = 1946, y = 275, label = " AUTUMN", color = "black", size = 4)+  
+ geom_text(x = 1946, y = 10, label = "WINTER", color = "black", size = 4)+  
+  
+  #  geom_smooth(aes(group = photoperiod_sensitive), method = "lm", se=F, size = 2, colour ="gray")+ #trendline
+  geom_smooth(method = "lm", se=F, size = 1)+ #trendline
+  
+   geom_text(x = 2020, y = 150, label = "Test1**", color = "#E69F00", size = 4)+
+  geom_text(x = 2020, y = 130, label = "Test2**", color = "#0072B2", size = 4)+
+#  geom_dl(label = data$photoperiod_sensitive, method="maxvar.points", inherit.aes=T)+
+#  annotation_raster(testimage, -Inf, Inf, -Inf, Inf) +
   guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE))+
   scale_colour_manual(values=mypalette)+
   theme_clean()+
   theme(legend.position = "none")+
-  scale_y_continuous(breaks=c(0,59, 151, 243, 334, 365),
-                     limits = c(0, 365), position = "right",
-                     sec.axis = sec_axis(~ . * 1, name = "Average First Flowering",
-                                         breaks = c(0, 59, 151, 243, 334, 365),
-                     labels = c("","Spring","Summer","Autumn", "Winter", "")))+
-  scale_x_continuous(breaks=c(1950, 1960, 1970, 1980, 1990, 2000, 2010, 2017), limit = c(1945, 2030))
+  scale_y_continuous(breaks=c(0,79, 172, 265, 355, 365),
+                     limits = c(0, 365), position = "left")+
+  scale_x_continuous(breaks=c(1950, 1960, 1970, 1980, 1990, 2000, 2010, 2017), limit = c(1940, 2030))
 
   photo_plot1
 ```
 
+Adding Brackets
+
+(May need to consult this guide to integrate grid.brackets into the ggplot:https://stackoverflow.com/questions/35633239/add-curly-braces-to-ggplot2-and-then-use-ggsave)
+
+```{r}
+photo_plot1
+  grid.brackets(620, 225, 620, 260, lwd=2, col="black")
+  
+  dev.copy(png,"./figures/mypng.png",height=1080,width=720) 
+dev.off()
+```
+
+
+
+Graph 2: More Axes
+```{r}
+photo_plot1 <-
+  ggplot(data, aes(x = year, y=doy, colour = photoperiod_sensitive))+
+  geom_count( alpha = 0.2)+
+  xlab("Year")+
+  ylab("Average First Flowering (Day of Year)")+
+  
+geom_rect(data = winter1.rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), colour = "white", fill="blue", alpha=0.1, size = 2, inherit.aes = FALSE)+
+ geom_rect(data =spring.rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), colour = "white", fill="green", alpha=0.1, size = 2, inherit.aes = FALSE)+
+ geom_rect(data = summer.rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), colour = "white", fill="red", alpha=0.1, size = 2, inherit.aes = FALSE)+
+ geom_rect(data = autumn.rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), colour = "white", fill="yellow", alpha=0.1, size = 2, inherit.aes = FALSE)+
+ geom_rect(data = winter2.rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), colour = "white", fill="blue", alpha=0.1, size = 2, inherit.aes = FALSE)+
+  
+geom_text(x = 1946, y = 89, label = " SPRING", color = "black", size = 4)+  
+ geom_text(x = 1946, y = 182, label = "SUMMER", color = "black", size = 4)+ 
+ geom_text(x = 1946, y = 275, label = " AUTUMN", color = "black", size = 4)+  
+ geom_text(x = 1946, y = 10, label = "WINTER", color = "black", size = 4)+  
+  
+  #  geom_smooth(aes(group = photoperiod_sensitive), method = "lm", se=F, size = 2, colour ="gray")+ #trendline
+  geom_smooth(method = "lm", se=F, size = 1)+ #trendline
+  
+  
+#  geom_dl(label = data$photoperiod_sensitive, method="maxvar.points", inherit.aes=T)+
+#  annotation_raster(testimage, -Inf, Inf, -Inf, Inf) +
+  guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE))+
+  scale_colour_manual(values=mypalette)+
+  theme_clean()+
+  theme(legend.position = "none")+
+  scale_y_continuous(breaks=c(0,79, 172, 265, 355, 365),
+                     limits = c(0, 365), position = "right",
+                     sec.axis = sec_axis(~ . * 1, name = "Average First Flowering",
+                                         breaks = c(0, 79, 172, 265, 355, 365)
+                    ,labels = c("","Spring","Summer","Autumn", "Winter", "")
+                     ))+
+  scale_x_continuous(breaks=c(1950, 1960, 1970, 1980, 1990, 2000, 2010, 2017), limit = c(1940, 2030))
+
+  photo_plot1
+```
