@@ -13,9 +13,7 @@
 #- lmer function in the lme4 package
 #- obtained P-values using the lmerTest package
 #- calculated the rate of change per decade by multiplying the slope of each line (the annual rate of change) by 10
-#- We also fitted linear models to the combined dataset including both photoperiod sensitive and insensitive species 
-#to identify whether it made a significant difference over time (Appendix C) and to each species, extracting the 
-#gradient of the line to find their individual rates of advancement.
+#- compared AIC/BIC using pbkrtest in pbmodcomp to model comparison
 
 
 getPhotoFFD <- function(data){
@@ -23,9 +21,7 @@ getPhotoFFD <- function(data){
 require(lme4)
 require(lmerTest)
 
-#lm.1 will be a model comparing flowering time (doy) with photoperiod sensitivity (sensitivity), year 
-#AND the interaction between sensitivity and year
-#Once again, species is included as random effects
+#lm.1 will be a model comparing flowering time (doy) with photoperiod sensitivity (sensitivity) AND the interaction between sensitivity and year WITH species as a random effect
 lm.1 <- lmer(doy ~ photoperiod_sensitive*year + (1|species), data = data)
 
 #Check the assumptions
@@ -38,11 +34,7 @@ qq.1 <- qqnorm(resid(lm.1))
 
 aic.1 <- AIC(lm.1)
 
-
-#graph the datapoints, comparing photoperiod sensitivite and not photoperiod sensitive
-write.csv(data, "./outputs/graphdata.csv")
-
-
+#Graph the linear model
 photo_plot <- 
   ggplot(data)+
   geom_point(aes(y=doy, year, colour = photoperiod_sensitive), size = 2, alpha = 0.4)+ #points that are shape 1 (hollow circle) and jittered
@@ -71,17 +63,6 @@ source_plot <- ggplot(data)+
   xlab("Year")+
   ylab("Average First Flowering Day")
 
-# A polished species plot with photoperiod as colour
-#ggplot(data)+
-#geom_smooth(aes(y=doy, year, group = species, colour = photoperiod_sensitive), method = "glm", se = FALSE)+
-#  xlab("Year")+
-#  ylab("Average First Flowering Day")+
-#  scale_colour_manual(values= c("#0072B2","#E69F00","#000000"))+ labs(colour = "Photoperiod Sensitive")+ theme_bw()
-
-#
-#Part 2: WIP
-#
-
 #separate data into photoperiod sensitive and insensitive samples
   
 data.t <- filter(data,  photoperiod_sensitive == TRUE)
@@ -101,10 +82,10 @@ residuals.f <- ggplot(lm.f, aes(.fitted, .resid)) +
   geom_point(alpha = 0.5, shape = 1) + 
   theme_classic()
 
-#qq.t <- qqnorm(resid(lm.t))
+qq.t <- qqnorm(resid(lm.t))
 #qqline(resid(lm.t))
 
-#qq.f <- qqnorm(resid(lm.f))
+qq.f <- qqnorm(resid(lm.f))
 #qqline(resid(lm.f))
 
 aic.t <- AIC(lm.t)
@@ -112,22 +93,21 @@ aic.f <- AIC(lm.f)
 
 #Comparing the two groups
 
-#Because we have more species that are sensitive to photoperiod than not, 
-#we will take a random sample of them to be able to properly compare the two
-#Check if this is ok statswise
+#Because we have different sample sizes and random effects we can't directly compare the two groups
+#We can however use parametric bootstrapping to
+#compare whether taking into account the impact of photoperiod sensitivity over the years improves the model
+#(by including an interaction between photoperiod sensitivity and year)
 
-#data.t.sampled <- sample_n(data.t, size = nrow(data.f)) #sample data.t so it has same samplesize as data.f for the ANOVA
+#lm.2: a comparison model that doesn't include the photoperion:year interaction (but is otherwise the same)
 
-#lm.t.sampled <- lmer(doy ~ year + (1|species), data = data.t.sampled, REML = F)
+lm.2 <- lmer(doy ~ photoperiod_sensitive+year + (1|species), data = data)
 
-#anova(lm.f, lm.t.sampled)
+#Now we simulate a load of (5999 simulations, i multiplied the recommended 599 by 10 as the number was recommended in 2010 when tech was older)
+#Be warned that this part usually takes a long time
 
-#Error here, iduno what uhhh
-#summary(lm.t)
-#summary(lm.f)
+PBmodcomp(lm.1, lm.2, h = 20, nsim = 5999)
 
-##Issue that old records and recent records are more 'extreme' and have higher residuals
-##qqplot(resid(lm.1))
+
 
 output <- list(lm_interaction = lm.1,
                residuals_interaction = residuals.1,
@@ -138,7 +118,9 @@ output <- list(lm_interaction = lm.1,
                photo_plot = photo_plot,
                species_plot = species_plot,
                speciesxphoto_plot = speciesxphoto_plot,
-               source_plot = source_plot)
+               source_plot = source_plot,
+               aic_modcomp_original = aic_modcomp1,
+               aic_modcomp_nointeraction = aic_modcomp2)
 
   return(output)
 

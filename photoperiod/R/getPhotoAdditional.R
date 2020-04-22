@@ -6,8 +6,12 @@
 #' @authors Karen Zeng, Alex Sentinella ATSentinella.at.gmail.com
 #' 
 
-#' #Title
-#- A
+#' #Additional analyses to do with separating species
+#- lm for each species
+#- lm using base R to obtain slope
+#- magrittr pipes to repeat lm
+#- Note that this is not an ideal analysis, each species irl would have different geographically isolated populations 
+#- I am concerned that the different block of observation time of different populations affect results, especially in the rmbl alpine group
 
 
 getPhotoAdditional <- function(data){

@@ -5,6 +5,9 @@ output: html_notebook
 
 Load Packages and Base data
 
+#Mypalette:
+- a colour palette to make the graph colours consistent
+
 #Photoperiod data:
 - species
 - photoperiodism: photoperiod sensitivity requirements(ad, id, ld, sd, ldsd, lsd, sd, sld, yes (exists in unknown form), na)
@@ -31,7 +34,7 @@ ft <- read.csv("./Data/appendix2.csv")
 
 Combine Photoperiod and Annual Average Flowering Day of Year data
 
-#Combined photoperiod and flowering time data
+Combined photoperiod and flowering time data columns:
 - species
 - doy: average first flowering day of a species each year
 - year
@@ -48,7 +51,7 @@ data <- joinFloweringData(pp, ft) #adding flowering time info to photoperiod sen
 ```
 
 
-Effect of Photoperiod Sensitivity on First Flowering Date over time
+Effect of Photoperiod Sensitivity on First Flowering Date over time analysis:
 - mixed effect generalised linear model
 - photoperiod sensitive vs photoperiod insensitive
 - lmer function in the lme4 package
@@ -94,26 +97,31 @@ summary(Photo.FFD.Results$lm_interaction)
 Photo.FFD.Results$photo_plot #show plot
 ```
 
-No evidence for different first flowering between photoperiod sensitive and photoperiod insensitive species
-- Effect of photoperiod sensitivity on first flowering non-significant
+Evidence for different first flowering between photoperiod sensitive and photoperiod insensitive species
+- Effect of photoperiod sensitivity on first flowering significant (p=0.00733)**
 
-No evidence for differing rates of change between photoperiod sensitive and photoperiod insensitive species
-- Interaction between photoperiod sensitive and insensitive species non-significant
+Evidence rates of change between photoperiod sensitive and photoperiod insensitive species
+- Interaction between photoperiod sensitive and insensitive species is significant (p<0.00713)**
 
 ```{r}
 summary(Photo.FFD.Results$lm_interaction)
 ```
 
 Additional Analysis
-- Because we had different sample sizes for photoperiod sensitive v photoperiod insensitive groups, 
-  we could not compare the variances of the two groups
+- Because we had different sample sizes for photoperiod sensitive v photoperiod insensitive groups, we could not compare the variances of the two groups
 - Thus, an ANOVA could not be peformed
+- However, by performing bootstrapping analysis we can figure out which model fits the data more closely
+
+
+
+
+##
 - We can however compare means of the two groups
 
-- So we fitted linear models to the combined dataset including both photoperiod sensitive and insensitive species to identify whether it made a significant difference over time (Appendix C) and to each species, extracting the gradient of the line to find their individual rates of advancement.
+- So we fitted linear models to the combined dataset including both photoperiod sensitive and insensitive species to identify whether it made a significant difference over time and to each species, extracting the gradient of the line to find their individual rates of advancement.
 
 - The resulting graph shows that there is no difference between photoperiod sensitive and photoperiod insensitive species.
-#add line to show n of samples for each treatment group so people don't ask to compare the variance
+#add line to show n of samples for each treatment group
 
 ```{r}
 source("./R/getPhotoAdditional.R")
@@ -125,7 +133,7 @@ Photo.Additional.Results$data_models_ttest
 Photo.Additional.Results$box_plot #show plot
 
 ```
-
+##
 
 Comparing the occurence of photoperiod sensitivity with other traits
 

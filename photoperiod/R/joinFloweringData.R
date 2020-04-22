@@ -11,11 +11,12 @@
 #- Flowering Time (ft)
 #- Species List (sl)
 #
-#Ideally we want tibble with the variables
+#Returns tibble with the following variables
 #- species
 #- avg_ffd: Average first flowering day (doy)
-#- photo: photoperiod sensitive (T/F)
 #- year
+#- source (where the data came from)
+#- photo: photoperiod sensitive (T/F)
 
 #
 #Issues:

@@ -65,7 +65,7 @@ getPhylo <- function(phylo_data){
                                     colour = sensitivity_yn, 
                                     size = 1.0)) +
                   geom_tiplab2(size = 3, offset = 20) +
-                  scale_color_manual(values = mypalette)
+                  scale_color_manual(values = c("#d9361a", "#063951"))
   
   tree_plot2
   
