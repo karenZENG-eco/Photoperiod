@@ -61,7 +61,7 @@ Analyse data
 
 ```{r include=FALSE}
 
-write.csv(data, "./graphdata.csv")
+write.csv(data, "./graphdata.csv") #save as csv
 
 source("./R/getPhotoFFD.R")
 
@@ -113,15 +113,19 @@ Additional Analysis
 - However, by performing bootstrapping analysis we can figure out which model fits the data more closely
 
 
+```{r}
+source("./R/getPval.R")
+
+Photo.FFD.Comparison <- getpval(data)
+```
 
 
 ##
-- We can however compare means of the two groups
+- We can also look at the phenological advancement of each species individually.
 
 - So we fitted linear models to the combined dataset including both photoperiod sensitive and insensitive species to identify whether it made a significant difference over time and to each species, extracting the gradient of the line to find their individual rates of advancement.
 
-- The resulting graph shows that there is no difference between photoperiod sensitive and photoperiod insensitive species.
-#add line to show n of samples for each treatment group
+- However, species data is likely skewed from the different sources that are seperate populations with vastly different climates (especially when comparing between a regular population and a rocky mountain population)...
 
 ```{r}
 source("./R/getPhotoAdditional.R")
