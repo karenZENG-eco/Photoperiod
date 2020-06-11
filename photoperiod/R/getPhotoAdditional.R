@@ -12,7 +12,7 @@
 #- magrittr pipes to repeat lm
 #- Note that this is not an ideal analysis, each species irl would have different geographically isolated populations 
 #- I am concerned that the different block of observation time of different populations affect results, especially in the rmbl alpine group
-
+#- Further analysis could be done that integrates gps coordinates to approximate population?
 
 getPhotoAdditional <- function(data){
   

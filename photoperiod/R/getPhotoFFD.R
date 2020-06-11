@@ -20,6 +20,7 @@ getPhotoFFD <- function(data){
 
 require(lme4)
 require(lmerTest)
+require(pbkrtest)
 
 #lm.1 will be a model comparing flowering time (doy) with photoperiod sensitivity (sensitivity) AND the interaction between sensitivity and year WITH species as a random effect
 lm.1 <- lmer(doy ~ photoperiod_sensitive*year + (1|species), data = data)
@@ -33,6 +34,7 @@ qq.1 <- qqnorm(resid(lm.1))
   qqline(resid(lm.1))
 
 aic.1 <- AIC(lm.1)
+
 
 #Graph the linear model
 photo_plot <- 
@@ -68,7 +70,8 @@ source_plot <- ggplot(data)+
 data.t <- filter(data,  photoperiod_sensitive == TRUE)
 data.f <- filter(data, photoperiod_sensitive == FALSE)
 
-#make a linear model for each group
+#make a line model for each group
+#used to draw the lines in resulting figures
 
 lm.t <- lmer(doy ~ year + (1|species), data = data.t, REML = F)
 lm.f <- lmer(doy ~ year + (1|species), data = data.f, REML = F)
@@ -93,19 +96,16 @@ aic.f <- AIC(lm.f)
 
 #Comparing the two groups
 
-#Because we have different sample sizes and random effects we can't directly compare the two groups
-#We can however use parametric bootstrapping to
-#compare whether taking into account the impact of photoperiod sensitivity over the years improves the model
-#(by including an interaction between photoperiod sensitivity and year)
-
-#lm.2: a comparison model that doesn't include the photoperion:year interaction (but is otherwise the same)
+#lm.2: a comparison model that doesn't include the photoperion:year interaction
 
 lm.2 <- lmer(doy ~ photoperiod_sensitive+year + (1|species), data = data)
+
+anova <- anova(lm.1, lm.2)
 
 #Now we simulate a load of (5999 simulations, i multiplied the recommended 599 by 10 as the number was recommended in 2010 when tech was older)
 #Be warned that this part usually takes a long time
 
-PBmodcomp(lm.1, lm.2, h = 20, nsim = 5999)
+bootstrap <- PBmodcomp(lm.1, lm.2, nsim = 5999)
 
 
 
@@ -119,8 +119,8 @@ output <- list(lm_interaction = lm.1,
                species_plot = species_plot,
                speciesxphoto_plot = speciesxphoto_plot,
                source_plot = source_plot,
-               aic_modcomp_original = aic_modcomp1,
-               aic_modcomp_nointeraction = aic_modcomp2)
+               anova = anova,
+               bootstrap = bootstrap)
 
   return(output)
 
