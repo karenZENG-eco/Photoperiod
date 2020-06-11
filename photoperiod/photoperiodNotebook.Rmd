@@ -40,8 +40,6 @@ Combined photoperiod and flowering time data columns:
 - year
 - source: source of record
 
-
-
 ```{r}
 
 source("./R/joinFloweringData.R")
@@ -75,6 +73,7 @@ results for linear models
 -QQplots for linear models
 -AIC for linear models
 -Results for ANOVAs
+-Results for bootstrapping
 
 ```{r}
 summary(Photo.FFD.Results$lm_interaction)
@@ -82,6 +81,7 @@ Photo.FFD.Results$residuals_interaction
 Photo.FFD.Results$qq_interaction
 Photo.FFD.Results$aic_interaction
 Photo.FFD.Results$anova
+Photo.FFD.Results$bootstrap
 
 summary(Photo.FFD.Results$lm_t)
 summary(Photo.FFD.Results$lm_f)
@@ -102,9 +102,13 @@ Evidence for different first flowering between photoperiod sensitive and photope
 
 Evidence rates of change between photoperiod sensitive and photoperiod insensitive species
 - Interaction between photoperiod sensitive and insensitive species is significant (p<0.00713)**
+- Anova between two linear models significant
+- Bootstrapping also reveals significant difference
 
 ```{r}
 summary(Photo.FFD.Results$lm_interaction)
+Photo.FFD.Results$anova
+Photo.FFD.Results$bootstrap
 ```
 
 Additional Analysis
@@ -223,7 +227,6 @@ Photo.GFLH.Results <- getChisqGFLH(data)
 ```{r}
 
 Photo.FFD.Results$plot
-
 
 ggplot(data, aes(y=doy, x=year, colour = photoperiod_sensitive))+
   geom_point()
