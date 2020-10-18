@@ -1,240 +1,222 @@
 ---
-title: "Photoperiod Project R Notebook"
+title: "Photoperiod Notebook"
 output: html_notebook
 ---
 
-Load Packages and Base data
-
-#Mypalette:
-- a colour palette to make the graph colours consistent
-
-#Photoperiod data:
-- species
-- photoperiodism: photoperiod sensitivity requirements(ad, id, ld, sd, ldsd, lsd, sd, sld, yes (exists in unknown form), na)
-- cultivar: if present, cultivar name
-- reference: source of information
-- notes: additional notes on photoperiod sensitivity
-- sensitivity_yn: binary variable of whether photoperiod sensitivity in any form exists in species
-
-#Flowering time data:
-- species
-- year: year of record
-- doy: day of year
-- source: source of information
-
+#1: Read in required packages and data
 ```{r}
 library(tidyverse)
+#library(rgeos) #for gCentroid()
+#library(rworldmap) #for getMap()
 
-mypalette <- c("#0072B2","#E69F00")
+pp <- read.csv("./data/appendix1.csv") #read in photoperiod data
+pplist <- gsub("_", " ", pp$species) #extract list of study species
+rm(pp) #unload photoperiod data from environment
 
-pp <- read.csv("./Data/appendix1.csv") #read in photoperiod data
-
-ft <- read.csv("./Data/appendix2.csv")
+apply_study_scope <- function(df) {
+  require(dplyr)
+  df %>% 
+  filter(species %in% pplist) %>%
+  dplyr::filter(is.na(doy) == F) %>% #remove na
+  filter(year>=1950) %>% #constrain years
+  filter(year<=2017) %>%
+  group_by(species, year, location, lat, lon)%>% #for each location*year*species combination,
+  slice(which.min(doy))  #take the first day of flowering every year
+}
 ```
 
-Combine Photoperiod and Annual Average Flowering Day of Year data
+NOTE: each source has the function applied seperately for efficiency (removes unecessary data points as early as possible)
 
-Combined photoperiod and flowering time data columns:
-- species
-- doy: average first flowering day of a species each year
-- year
-- source: source of record
+#2: Craine, J.M., Wolkovich, E.M., Gene Towne, E. and Kembel, S.W., 2012. Flowering phenology as a functional trait in a tallgrass prairie. New Phytologist, 193(3), pp.673-682.
+```{r}
+craine <- read.csv("./data/raw/Craine2012/craine_2012.csv")
 
+craine$location <- "USA"
+craine$lat <- "39.08" #add location based on paper (coordinates provided)
+craine$lon <- "-96.56"
+craine$latlon_verified <- T #google earth verify approximate location
+craine$source <- "craine" #add source
+
+craine <- apply_study_scope(craine)
+```
+
+#3: Fitter, A.H. and Fitter, R.S.R., 2002. Rapid changes in flowering time in British plants. Science, 296(5573), pp.1689-1691.
+```{r}
+fitter <- read.csv("./data/raw/Fitter2002/fitter_2002.csv")
+
+fitter <- gather(fitter, "year", "doy", 2:48)#tidy
+fitter$year <- str_sub(fitter$year, 2)#remove X from year
+colnames(fitter)[1] <- "species" #rename species column
+fitter <- fitter %>% filter(is.na(fitter$doy) == F)#remove NAs
+fitter$lat <- NA
+fitter$lon <- NA
+fitter$location <- "Britain"
+fitter$source <- "fitter"#add source
+
+fitter <- apply_study_scope(fitter)
+```
+
+#4: Park D, Williams A, Law E, Ellison A, Davis C. 2018. Assessing Plant Phenological Patterns in the Eastern United States Over the Last 120 Years. Harvard Forest Data Archive: HF309.
+```{r}
+park <- read.csv("./data/raw/Harvard_Forest/hf309-01.csv")
+park <- park %>% 
+  filter(phenophase == "efl") %>% #note that efl = first flower
+  transmute(species = gsub("_", " ", name), 
+            year = year, 
+            doy = doy, 
+            location = "USA", 
+            lat = county.lat,
+            lon = county.lon,
+            latlon_verified = F,
+            source = "park")
+
+park <- apply_study_scope(park)
+```
+
+#5: Davis C, Ellison A. 2016. Eastern Massachusetts Flowering Phenology 1852-2013. Harvard Forest Data Archive: HF258.
+
+hf258-03:Herbarium
+```{r}
+davis_h <- read.csv("./data/raw/Harvard_Forest/hf258-03.csv") #herbarium
+davis_h <- davis_h %>%
+  filter(phenology == "Flowering") %>% #filter flowering only
+  transmute(species = genus.species, 
+            year = year, 
+            doy = doy, 
+            lat = NA,
+            lon = NA,
+            location = locality,
+            source = "davis")
+```
+hf258-04: Field
+```{r}
+davis_f <- read.csv("./data/raw/Harvard_Forest/hf258-04.csv") #field
+davis_f <- davis_f %>%
+  filter(phenology == "Flowering") %>% #filter flowering only
+  transmute(species = genus.species, 
+            year = year, 
+            doy = doy, 
+            lat = NA,
+            lon = NA,
+            location = locality,
+            source = "davis")
+```
+Combined
+```{r}
+davis <- bind_rows(davis_f, davis_h)
+rm(davis_f)
+rm(davis_h)
+
+davis <- apply_study_scope(davis)
+```
+
+#6: Abu-Asab, M.S., Peterson, P.M., Shetler, S.G. and Orli, S.S., 2001. Earlier plant flowering in spring as a response to global warming in the Washington, DC, area. Biodiversity & Conservation, 10(4), pp.597-612.
+```{r}
+abuasab <- read.csv("./data/raw/AbuAsab2001/abuasab_2001_doy.csv")
+abuasab <- gather(abuasab, "year", "doy", 2:30)
+
+abuasab <- abuasab %>%
+  transmute(species = Species, 
+            year = gsub("X", "", year),
+            doy = doy, 
+            location = "Washington DC", 
+            lat = NA,
+            lon = NA,
+            latlon_verified = F,
+            source = "abuasab")
+
+abuasab <- apply_study_scope(abuasab)
+
+```
+
+#7: [RMBL]
+```{r}
+rmbl <- read.csv("./data/raw/RMBL Phenology/RMBL_Phenology_1974-2017_Zeng.csv")
+
+rmbl <- rmbl %>%
+    transmute(species = species, 
+            year = year,
+            doy = doy, 
+            location = plot, 
+            lat = NA,
+            lon = NA,
+            latlon_verified = F,
+            source = "rmbl")
+
+rmbl <- apply_study_scope(rmbl)
+```
+
+#8: [UK Nature's Calender Woodland Trust]
+```{r}
+uknc <- bind_rows(
+  read.csv("./data/raw/UKNCWT/uknc_1950-1999.csv"),
+  read.csv("./data/raw/UKNCWT/uknc_2000-2006.csv"),
+  read.csv("./data/raw/UKNCWT/uknc_2007-2016.csv")
+  )
+
+#unique(uknc$SpeciesLatinName) #add missing latin names
+uknc$SpeciesLatinName[uknc$SpeciesName == "Plum"] <- "Prunus domestica"
+uknc$SpeciesLatinName[uknc$SpeciesName == "Pignut, Earthnut"] <- "Conopodium majus"
+uknc$SpeciesLatinName[uknc$SpeciesName == "Wild Cherry, Gean"] <- "Prunus avium"
+uknc$SpeciesLatinName[uknc$SpeciesName == "Wood Avens, Herb Robert"] <- "Geum urbanum"
+uknc$SpeciesLatinName[uknc$SpeciesName == "Heather, Ling"] <- "Calluna vulgaris"
+uknc$SpeciesLatinName[uknc$SpeciesName == "Turnip, Naven"] <- "Brassica rapa subsp rapa"
+
+uknc1 <- uknc %>% #group 1: has latitude
+  filter(is.na(Latitude) == F)
+
+uknc2 <- uknc %>%  #group 2: has no latitude but eastings and northings
+  filter(is.na(Latitude) == T) %>% 
+  filter(is.na(Easting) == F)
+
+ukgrid = "+init=epsg:27700" #define the current grid system (OSGB1936 / British National Grid - United Kingdom Ordnance Survey)
+latlong = "+init=epsg:4326" #define WGS84, the grid sytem that we are using
+
+uknc2_raster <- raster(list(x = uknc2$Easting, y = uknc$Northing), crs = ukgrid) #convert coordinates to raster (###error: requires raster:: package that won't download because onenote hates me)
+
+uknc2_raster = projectRaster(uknc2_raster, crs = latlong)#change raster format from uk grid to latlong
+
+uknc2$Latitude <- uknc2_raster$ # #extract lat long values from raster and put them back into uknc2 data
+uknc2$Latitude <- uknc2_raster$
+
+  
+uknc3 <- uknc %>% #group 3: has no latitude and no eastings and northings
+    filter(is.na(Latitude) == T) %>% 
+  filter(is.na(Easting) == F)
+
+uknc3$Latitude <- 53.8337 #set location as the middle of the UK
+uknc3$Longitude <- 2.4290
+
+uknc <- bind_rows(uknc1, uknc2, uknc3) #recombine
+
+uknc <- uknc %>%
+    transmute(species = SpeciesLatinName, 
+            year = ObservationYear,
+            doy = ObservationDay, 
+            location = loccounty, 
+            lat = Latitude,
+            lon = Longitude,
+            latlon_verified = F,
+            source = "uknc")
+
+uknc <- apply_study_scope(uknc)#apply study scope
+
+```
+
+
+#9: [US Phenology Network]
 ```{r}
 
-source("./R/joinFloweringData.R")
-
-data <- joinFloweringData(pp, ft) #adding flowering time info to photoperiod sensitivity info
-
 ```
 
 
-Effect of Photoperiod Sensitivity on First Flowering Date over time analysis:
-- mixed effect generalised linear model
-- photoperiod sensitive vs photoperiod insensitive
-- lmer function in the lme4 package
-- obtained P-values using the lmerTest package
-
-Analyse data
-
-```{r include=FALSE}
-
-write.csv(data, "./graphdata.csv") #save as csv
-
-source("./R/getPhotoFFD.R")
-
-Photo.FFD.Results <- getPhotoFFD(data) #Analyse data
-
-```
-
-Optional: Check Assumptions
-results for linear models
--Residuals for linear models
--QQplots for linear models
--AIC for linear models
--Results for ANOVAs
--Results for bootstrapping
-
+#10: [PEP 725 reference] this will be a big one, leave until the end
 ```{r}
-summary(Photo.FFD.Results$lm_interaction)
-Photo.FFD.Results$residuals_interaction
-Photo.FFD.Results$qq_interaction
-Photo.FFD.Results$aic_interaction
-Photo.FFD.Results$anova
-Photo.FFD.Results$bootstrap
-
-summary(Photo.FFD.Results$lm_t)
-summary(Photo.FFD.Results$lm_f)
-```
-
-The Results
-
-Photoperiod sensitive plants are flowering later than photoperiod insensitive plants
-- Significant effect of photoperiod sensitivity 
-
-```{r}
-summary(Photo.FFD.Results$lm_interaction)
-Photo.FFD.Results$photo_plot #show plot
-```
-
-Evidence for different first flowering between photoperiod sensitive and photoperiod insensitive species
-- Effect of photoperiod sensitivity on first flowering significant (p=0.00733)**
-
-Evidence rates of change between photoperiod sensitive and photoperiod insensitive species
-- Interaction between photoperiod sensitive and insensitive species is significant (p<0.00713)**
-- Anova between two linear models significant
-- Bootstrapping also reveals significant difference
-
-```{r}
-summary(Photo.FFD.Results$lm_interaction)
-Photo.FFD.Results$anova
-Photo.FFD.Results$bootstrap
-```
-
-Additional Analysis
-- Because we had different sample sizes for photoperiod sensitive v photoperiod insensitive groups, we could not compare the variances of the two groups
-- Thus, an ANOVA could not be peformed
-- However, by performing bootstrapping analysis we can figure out which model fits the data more closely
-
-
-```{r}
-source("./R/getPval.R")
-
-Photo.FFD.Comparison <- getpval(data)
-```
-
-
-##
-- We can also look at the phenological advancement of each species individually.
-
-- So we fitted linear models to the combined dataset including both photoperiod sensitive and insensitive species to identify whether it made a significant difference over time and to each species, extracting the gradient of the line to find their individual rates of advancement.
-
-- However, species data is likely skewed from the different sources that are seperate populations with vastly different climates (especially when comparing between a regular population and a rocky mountain population)...
-
-```{r}
-source("./R/getPhotoAdditional.R")
-
-Photo.Additional.Results <- getPhotoAdditional(data)
-
-Photo.Additional.Results$data_models_output #show modelled changes in FFD for each species
-Photo.Additional.Results$data_models_ttest
-Photo.Additional.Results$box_plot #show plot
-
-```
-##
-
-Comparing the occurence of photoperiod sensitivity with other traits
-
-Get photoperiodism data
-- Remove parts not needed for analysis
-
-Get Life History and Growth Form Data
-- Life history data (annual/perennial) from the TRY plant database  
-- Growth form data (woody/herbaceous) was adapted from Zanne et al. (2009). 
-- Species that could not be readily classified in to these groups were excluded from the relevant analyses
-
-#Only works half the time?
-
-```{r}
-traits_data <- transmute(pp, species = species, photoperiodism = photoperiodism, photoperiod_sensitive = sensitivity_yn)
-
-source("./R/addLHGF.R")
-
-traits_data <- addLHGF(traits_data) #takes tibble, and adds columns for life history and growth form
-```
-
-
-```{r}
-source("./R/piechart.R")
-```
-
-Analyse Life History
-```{r}
-life_history <- traits_data %>% #Tally life histories
-  filter(!is.na(life))%>%
-  group_by(photoperiod_sensitive, life) %>%
-  tally()
-
-life_history
-
-life_history_chi <- chisq.test(life_history$n, p = c(0.25, 0.25, 0.25, 0.25)) #Perform chi-square test
-
-life_history_chi
-life_history_chi$residuals
-```
-
- and Growth Form Data
- 
-```{r}
-woodiness <- traits_data %>%
-  filter(!is.na(woodiness), woodiness != "variable")%>% #remove NAs and variable woodiness
-  group_by(photoperiod_sensitive, woodiness) %>%
-  tally()
-
-woodiness
-
-woodiness_chi <- chisq.test(woodiness$n, p = c(0.25, 0.25, 0.25, 0.25))
-woodiness_chi
-woodiness_chi$residuals
-```
- 
-
-Phylogentic Analysis
-- Combine the photoperiod sensitivity data with the phylogenetic data using used the phylosignal package
-- pruning the phylogenetic tree published by Zanne et al. (2014) using the ape package
-- Phylogenetic signal and the significance of the signal was calculated using phylo.d from the caper package to:
-  - find Frits and Purvis D 
-
-```{r}
-data <- pp
-
-source("./R/getPhylo.R")
-
-Photo.Phylo.Results <- getPhylo(data)
-```
-
-
-Finally, we performed chi-squared tests comparing photoperiod sensitivity with life history and woodiness using the chisq.test command from base R (R Core Team, 2017).
-
-```{r}
-source("getChisqGFLH.R")
-
-Photo.GFLH.Results <- getChisqGFLH(data)
-```
-
-
-
-```{r}
-
-Photo.FFD.Results$plot
-
-ggplot(data, aes(y=doy, x=year, colour = photoperiod_sensitive))+
-  geom_point()
-
-
-Photo.Phylo.Results
-
-Photo.GFLH.Results
+#create list of csvs
+#load function to read and add filename to column
+#add centeralised coordinates based on filename and geonames package
+#add source
+#remove extraneous information
 
 ```
 
