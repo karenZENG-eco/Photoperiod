@@ -170,15 +170,19 @@ uknc2 <- uknc %>%  #group 2: has no latitude but eastings and northings
   filter(is.na(Easting) == F)
 
 ukgrid = "+init=epsg:27700" #define the current grid system (OSGB1936 / British National Grid - United Kingdom Ordnance Survey)
-latlong = "+init=epsg:4326" #define WGS84, the grid sytem that we are using
+latlon = "+init=epsg:4326" #define WGS84, the grid sytem that we are using
 
-uknc2_raster <- raster(list(x = uknc2$Easting, y = uknc$Northing), crs = ukgrid) #convert coordinates to raster (###error: requires raster:: package that won't download because onenote hates me)
+library(raster)
+library(rgdal)
 
-uknc2_raster = projectRaster(uknc2_raster, crs = latlong)#change raster format from uk grid to latlong
+uknc2.spatial <- SpatialPoints(data.frame(x = uknc2$Easting, y = uknc2$Northing))#create spatial points
 
-uknc2$Latitude <- uknc2_raster$ # #extract lat long values from raster and put them back into uknc2 data
-uknc2$Latitude <- uknc2_raster$
+proj4string(uknc2.spatial) <- CRS(ukgrid) #add crs (it was auto-detected but still best practice)
 
+uknc2.spatial <- spTransform(uknc2.spatial, CRS(latlon))#reproject
+
+uknc2$Longitude <- uknc2.spatial@coords[,1]
+uknc2$Latitude <- uknc2.spatial@coords[,2]
   
 uknc3 <- uknc %>% #group 3: has no latitude and no eastings and northings
     filter(is.na(Latitude) == T) %>% 
@@ -206,6 +210,23 @@ uknc <- apply_study_scope(uknc)#apply study scope
 
 #9: [US Phenology Network]
 ```{r}
+uspn <- read.csv("./data/raw/US Phenology Network/status_intensity_observation_data.csv")
+
+uspn <- uspn %>% 
+  filter(Phenophase_ID == "77"|Phenophase_ID == "412"|Phenophase_ID == "428")#take first bloom for each species
+ unite(uspn$species, uspn$Genus, uspn$Species)
+  
+uspn <- uspn %>%
+    transmute(species = paste(Genus, species), #combine genus species
+            year = str_sub(Observation_Date, start = -4), #extract year by taking last 4 characters of the date
+            doy = Day_of_Year, 
+            location = State, 
+            lat = Latitude,
+            lon = Longitude,
+            latlon_verified = F,
+            source = "uspn")
+
+uspn <- apply_study_scope(uspn)
 
 ```
 
