@@ -233,10 +233,36 @@ uspn <- apply_study_scope(uspn)
 
 #10: [PEP 725 reference] this will be a big one, leave until the end
 ```{r}
-#create list of csvs
-#load function to read and add filename to column
-#add centeralised coordinates based on filename and geonames package
+#comment code is what was used to build the useful dataset from raw, it is saved so there is no need to rerun normally
+
+#pep725.list <- list.files(path = "./data/raw/EU_PEP725/PEP725_FT/", full.names = F)#create list of csvs
+
+
+#add_filename <- function(arg_filename, input_folder = "./data/", output_folder = "./output/"){
+#arg_data <-read.csv2(paste0(input_folder, arg_filename))#read file, note that files are in quropean format where semicolon is used instead of comma
+#
+#arg_data <- mutate(arg_data, filename = arg_filename)#add new column
+#
+#  write.csv(arg_data, paste0(output_folder,"edited_", arg_filename)) #write new file in output folder with new name
+#}
+
+#add_filename("PEP725_AT_Beta_vulgaris.csv", "./data/raw/EU_PEP725/PEP725_FT/", "./data/output/") #test on the first one
+
+#pep725.list %>%
+#  map(add_filename, input_folder = "./data/raw/EU_PEP725/PEP725_FT/", output_folder = "./data/output/") #apply function to everything
+
+pep725 <- list.files("./data/output", full.names = T) %>% map_df(read.csv)#read in the whole folder
+
+pep725 <- pep725 %>% filter(BBCH == "60") #filter for first flowering (BBCH = 60)
+
+pep725$location <- str_sub(pep725$filename, start = 8, end = 9) #country code
+pep725$species <- str_sub(pep725$filename, start = 11, end = -5) #species name
+pep725$source <- "pep725"
+
+
+#add country based on filename
 #add source
+
 #remove extraneous information
 
 ```
