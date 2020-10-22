@@ -1,0 +1,15 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(rgeos) #for gCentroid()
+library(rworldmap) #for getMap()
+library(rworldxtra) #for higher resolution map
+
+ft <- read.csv("./data/appendix2.csv") #re-read completed data
+
+```
+
