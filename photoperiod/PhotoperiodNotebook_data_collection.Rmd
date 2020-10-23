@@ -346,7 +346,7 @@ countrycoords <- rownames_to_column(countrycoords, var = "country")#turn the row
 
 pep725 <- left_join(pep725, countrycoords, by = "country")#add coordinates to country names
 pep725$x[pep725$country == "Macedonia, the Former Yugoslav Republic of"] <- "41.195558"#manually change the coordinates of places that aren't on the list
-pep725$x[pep725$country == "Macedonia, the Former Yugoslav Republic of"] <- "22.715024"
+pep725$y[pep725$country == "Macedonia, the Former Yugoslav Republic of"] <- "22.715024"
 
 rm(wmap)
 rm(countrycoords)
@@ -364,8 +364,8 @@ pep725 <- pep725 %>%
             year = YEAR, #extract year by taking last 4 characters of the date
             doy = DAY, 
             location = country, 
-            lat = as.numeric(x),
-            lon = as.numeric(y),
+            lat = as.numeric(y),
+            lon = as.numeric(x),
             latlon_verified = F,
             source = "pep725")
 

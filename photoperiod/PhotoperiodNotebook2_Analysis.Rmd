@@ -2,14 +2,55 @@
 title: "R Notebook"
 output: html_notebook
 ---
-
-
+#load packages
 ```{r}
+library(tidyverse)
+library(ggplot2) #for graphs
+library(ggmap)
+library(raster) #for raster format
 library(rgeos) #for gCentroid()
 library(rworldmap) #for getMap()
 library(rworldxtra) #for higher resolution map
+```
+#load data
+Mypalette:
+- a colour palette to make the graph colours consistent
 
-ft <- read.csv("./data/appendix2.csv") #re-read completed data
+Photoperiod data:
+- species
+- photoperiodism: photoperiod sensitivity requirements(ad, id, ld, sd, ldsd, lsd, sd, sld, yes (exists in unknown form), na)
+- cultivar: if present, cultivar name
+- reference: source of information
+- notes: additional notes on photoperiod sensitivity
+- sensitivity_yn: binary variable of whether photoperiod sensitivity in any form exists in species
+
+Flowering time data:
+- species
+- year: year of record
+- doy: day of year
+- source: source of information
+
+```{r}
+pp <- read.csv("./Data/appendix1.csv") #read in photoperiod data
+pp$species <- gsub("_", " ",pp$species)
+ft <- read.csv("./data/appendix2.csv") #read completed flowering time data
+
+df <- left_join(ft, pp, by = "species")
+rm(pp)
+rm(ft)
+
+#coordinates(df)=~lat+lon #turn dataframe into spatial
+#proj4string(df)=CRS("+init=epsg:4326") #specify projection 
+```
+
+```{r}
+map_base <- ggplot() + #specify map base
+  borders("world", colour="gray50", fill="gray50")
+
+map_source <- map_base + #layer points on map
+  geom_point(aes(x=df$lon, y=df$lat), color = 1:length(df$source), size=3)
+
+map_source
 
 ```
 
