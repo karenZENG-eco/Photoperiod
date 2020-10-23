@@ -6,7 +6,8 @@ output: html_notebook
 ```{r}
 library(tidyverse)
 library(ggplot2) #for graphs
-library(ggmap)
+library(ggmap) #for mapping
+library(sf) #for applying graphs to spatial data (simple version of sp)
 library(raster) #for raster format
 library(rgeos) #for gCentroid()
 library(rworldmap) #for getMap()
@@ -39,18 +40,23 @@ df <- left_join(ft, pp, by = "species")
 rm(pp)
 rm(ft)
 
-#coordinates(df)=~lat+lon #turn dataframe into spatial
-#proj4string(df)=CRS("+init=epsg:4326") #specify projection 
 ```
 
+#simple map of data
 ```{r}
 map_base <- ggplot() + #specify map base
   borders("world", colour="gray50", fill="gray50")
 
-map_source <- map_base + #layer points on map
-  geom_point(aes(x=df$lon, y=df$lat), color = 1:length(df$source), size=3)
+map_pp_reference <- map_base + #use map base
+  geom_jitter(data = df, aes(x = lon, y = lat, colour = reference), size = 0.05, alpha = 0.1, shape = 1) +#layer points on map
+  guides(colour = guide_legend(override.aes = list(size = 1, alpha = 1))) #override the transparancy and size to make legend readable
 
-map_source
+map_pp_reference
+
+```
+
+#create raster
+```{r}
 
 ```
 
