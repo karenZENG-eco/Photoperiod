@@ -6,12 +6,6 @@ output: html_notebook
 ```{r}
 library(tidyverse)
 library(ggplot2) #for graphs
-library(ggmap) #for mapping
-library(sf) #for applying graphs to spatial data (simple version of sp)
-library(raster) #for raster format
-library(rgeos) #for gCentroid()
-library(rworldmap) #for getMap()
-library(rworldxtra) #for higher resolution map
 ```
 #load data
 Mypalette:
@@ -42,21 +36,117 @@ rm(ft)
 
 ```
 
-#simple map of data
+#remove data without long, short or no daylenth requirement. This is mostly because they have multiple requirements in a specific order.
+
 ```{r}
+df$simple_photoperiodism <- as.factor(df$simple_photoperiodism) #make it a factor
+df$simple_photoperiodism <- relevel(df$simple_photoperiodism, "na") #relevel so na is the reference factor
+
+df_final <- df %>%
+  filter(simple_photoperiodism != "other") #filter
+```
+
+#a quick summary of our data
+```{r}
+summary(df_final)
+```
+
+
+#map data
+```{r}
+library(sf) #for applying graphs to spatial data (simple version of sp)
+library(rgeos) #for gCentroid()
+library(rworldmap) #for getMap()
+library(rworldxtra) #for higher resolution map
+
 map_base <- ggplot() + #specify map base
   borders("world", colour="gray50", fill="gray50")
 
-map_pp_reference <- map_base + #use map base
-  geom_jitter(data = df, aes(x = lon, y = lat, colour = reference), size = 0.05, alpha = 0.1, shape = 1) +#layer points on map
-  guides(colour = guide_legend(override.aes = list(size = 1, alpha = 1))) #override the transparancy and size to make legend readable
+map_pp <- map_base + #use map base
+  geom_jitter(data = df_final, aes(x = lon, y = lat, colour = simple_photoperiodism), size = 0.05, alpha = 0.1, shape = 1) +#layer points on map
+  xlim(-125, 45)+ #set x limits based on summary
+  ylim(20, 65)+#set y limits based on summary
+  guides(colour = guide_legend(override.aes = list(size = 1, alpha = 1))) #override the transparency and size to make legend readable
 
-map_pp_reference
+map_pp
+
+```
+#Analyse data
+
+```{r}
+library(tidyverse)
+library(lme4)
+library(lmerTest)
+
+lm_basic <- lmer(doy ~ sensitivity_yn*year + (1|species), data = df) #original model with species and binary sensitivity
+
+lm_groups <- lmer(doy ~ simple_photoperiodism*year + (1|species), data = df) #improved model with species and groups of sensitivity
+
+lm_latitude <- lmer(doy ~ sensitivity_yn*year + (1|species) + lat, data = df) #improved model as above with latitude as fixed effect
+
+lm_final <- lmer(doy ~ simple_photoperiodism*year + (1|species) + lat, data = df_final)#improved model with all aspects of previous models with 'other' group removed
+
+lm_comparison <- lmer(doy ~ year + (1|species) + lat, data = df_final) #comparison model to lm_final with photoperiodism removed as variable
 
 ```
 
-#create raster
+#check assumptions of model
 ```{r}
+hist(resid(lm_final), breaks = 20) #look at normality of residuals
 
+qqnorm(resid(lm_final)) #qqplot
+qqline(resid(lm_final)) #add line
+```
+
+
+#Comparing our final model with the others
+To determine whether photoperiod information improves our flowering time model, let's see compare the pair
+```{r}
+summary(lm_final)
+AIC(lm_final)
+AIC(lm_comparison)
+anova(lm_final, lm_comparison)
+```
+
+#Comparing our final models through bootstrapping
+```{r}
+library(pbkrtest)
+
+bootstrap <- PBmodcomp(lm_final, lm_comparison, nsim = 599) #bootstrap comparison
+bootstrap
+```
+
+#look at each photoperiod group seperately
+```{r}
+lm_na <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_photoperiodism == "na")
+
+lm_sd <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_photoperiodism == "sd")
+
+lm_ld <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_photoperiodism == "ld")
+
+summary(lm_na)
+summary(lm_sd)
+summary(lm_ld)
+```
+
+
+#plot graph
+```{r}
+ggplot.photogroups <- 
+  ggplot(df_final)+
+  geom_point(aes(y=doy, x = year, colour = simple_photoperiodism), size = 1, alpha = 0.2)+
+  xlab("Year")+
+  ylim(-4, 366)+
+  xlim(1950, 2017)+
+  ylab("Average First Flowering Day")+
+  guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE))+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 15, face  = "bold"))
+
+ggplot.photogroups
 ```
 

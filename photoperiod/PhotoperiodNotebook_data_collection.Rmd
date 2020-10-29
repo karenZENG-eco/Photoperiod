@@ -6,9 +6,6 @@ output: html_notebook
 #1: Read in required packages and data
 ```{r}
 library(tidyverse)
-library(rgeos) #for gCentroid()
-library(rworldmap) #for getMap()
-library(rworldxtra) #for higher resolution map
 
 pp <- read.csv("./data/appendix1.csv") #read in photoperiod data
 pplist <- gsub("_", " ", pp$species) #extract list of study species
@@ -375,8 +372,23 @@ rm(pep725)
 
 ```
 
+#Round data to help with future analysis and 
 #Save final dataset for easy access
 ```{r}
+pp <- read.csv("./data/appendix1.csv")
+pp$simple_photoperiodism <- "other" #new column simplifying photoperiodism
+pp$simple_photoperiodism[pp$photoperiodism == "ld"] <- "ld"
+pp$simple_photoperiodism[pp$photoperiodism == "sd"] <- "sd"
+pp$simple_photoperiodism[pp$photoperiodism == "na"] <- "na"
+write.csv(pp,"./data/appendix1.csv", row.names = F)
+
+  flowering_time$lon_int <- floor(flowering_time$lon) #new column adding 1*1 degree bins for longitude and latitude
+  flowering_time$lat_int <- floor(flowering_time$lat)
+  
+flowering_time <- flowering_time %>% 
+  group_by(species, year, location, lat_int, lon_int)%>% #for each location*year*species combination,
+  slice(which.min(doy))  #find first flowering each degree cell
+ 
 write.csv(flowering_time,"./data/appendix2.csv", row.names = F)
 rm(apply_study_scope)
 rm(pplist)
