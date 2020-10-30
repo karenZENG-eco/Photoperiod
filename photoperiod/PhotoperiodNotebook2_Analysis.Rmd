@@ -2,15 +2,8 @@
 title: "R Notebook"
 output: html_notebook
 ---
-#load packages
-```{r}
-library(tidyverse)
-library(ggplot2) #for graphs
-```
-#load data
-Mypalette:
-- a colour palette to make the graph colours consistent
 
+#load data
 Photoperiod data:
 - species
 - photoperiodism: photoperiod sensitivity requirements(ad, id, ld, sd, ldsd, lsd, sd, sld, yes (exists in unknown form), na)
@@ -26,6 +19,9 @@ Flowering time data:
 - source: source of information
 
 ```{r}
+library(tidyverse)
+library(ggplot2) #for graphs
+
 pp <- read.csv("./Data/appendix1.csv") #read in photoperiod data
 pp$species <- gsub("_", " ",pp$species)
 ft <- read.csv("./data/appendix2.csv") #read completed flowering time data
@@ -92,12 +88,12 @@ lm_comparison <- lmer(doy ~ year + (1|species) + lat, data = df_final) #comparis
 
 #check assumptions of model
 ```{r}
-hist(resid(lm_final), breaks = 20) #look at normality of residuals
-
 qqnorm(resid(lm_final)) #qqplot
 qqline(resid(lm_final)) #add line
-```
 
+hist(resid(lm_final), breaks = 25) #look at normality of residuals
+```
+The qq plot seems heavy tailed at the start but after looking at the histogram, the proportion of samples in the tail is very small compared to the main section, which fits pretty well.
 
 #Comparing our final model with the others
 To determine whether photoperiod information improves our flowering time model, let's see compare the pair
@@ -107,6 +103,7 @@ AIC(lm_final)
 AIC(lm_comparison)
 anova(lm_final, lm_comparison)
 ```
+The AICs on their own suggest that photoperiod does improve the model, and the ANOVA shows that this improvement is significant!
 
 #Comparing our final models through bootstrapping
 ```{r}
@@ -124,11 +121,14 @@ lm_sd <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_p
 
 lm_ld <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_photoperiodism == "ld")
 
-summary(lm_na)
+test <- summary(lm_na)
 summary(lm_sd)
 summary(lm_ld)
+
+lm_ld$c
 ```
 
+from these summaries we can identify the individual movement of each group over time.
 
 #plot graph
 ```{r}
