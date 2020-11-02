@@ -24,6 +24,11 @@ library(ggplot2) #for graphs
 
 pp <- read.csv("./Data/appendix1.csv") #read in photoperiod data
 pp$species <- gsub("_", " ",pp$species)
+
+pp <- pp %>% 
+  group_by(species)%>% #for each location*year*species combination,
+  slice(which.min(doy))  #find first flowering each degree cell
+
 ft <- read.csv("./data/appendix2.csv") #read completed flowering time data
 
 df <- left_join(ft, pp, by = "species")
@@ -74,11 +79,11 @@ library(tidyverse)
 library(lme4)
 library(lmerTest)
 
-lm_basic <- lmer(doy ~ sensitivity_yn*year + (1|species), data = df) #original model with species and binary sensitivity
+#lm_basic <- lmer(doy ~ sensitivity_yn*year + (1|species), data = df) #original model with species and binary sensitivity
 
-lm_groups <- lmer(doy ~ simple_photoperiodism*year + (1|species), data = df) #improved model with species and groups of sensitivity
+#lm_groups <- lmer(doy ~ simple_photoperiodism*year + (1|species), data = df) #improved model with species and groups of sensitivity
 
-lm_latitude <- lmer(doy ~ sensitivity_yn*year + (1|species) + lat, data = df) #improved model as above with latitude as fixed effect
+#lm_latitude <- lmer(doy ~ sensitivity_yn*year + (1|species) + lat, data = df) #improved model as above with latitude as fixed effect
 
 lm_final <- lmer(doy ~ simple_photoperiodism*year + (1|species) + lat, data = df_final)#improved model with all aspects of previous models with 'other' group removed
 
@@ -93,15 +98,15 @@ qqline(resid(lm_final)) #add line
 
 hist(resid(lm_final), breaks = 25) #look at normality of residuals
 ```
-The qq plot seems heavy tailed at the start but after looking at the histogram, the proportion of samples in the tail is very small compared to the main section, which fits pretty well.
+The qq plot seems heavy tailed at the start but after looking at the histogram, the proportion of samples in the tail is very small compared to the main section, which fits pretty well. 
 
 #Comparing our final model with the others
 To determine whether photoperiod information improves our flowering time model, let's see compare the pair
 ```{r}
-summary(lm_final)
-AIC(lm_final)
+AIC(lm_final) #compare the pair
 AIC(lm_comparison)
-anova(lm_final, lm_comparison)
+
+anova(lm_final, lm_comparison) #compare the pair statistically
 ```
 The AICs on their own suggest that photoperiod does improve the model, and the ANOVA shows that this improvement is significant!
 
@@ -112,8 +117,24 @@ library(pbkrtest)
 bootstrap <- PBmodcomp(lm_final, lm_comparison, nsim = 599) #bootstrap comparison
 bootstrap
 ```
+So now we've confirmed that photoperiodism ihas an effect on flowering time. 
+Let's look at the details
 
-#look at each photoperiod group seperately
+#Look at what our model tells us
+```{r}
+summary(lm_final) #look at our model
+```
+We have a lot of variable to unpack, so remembering that no photoperiodism is the baseline for when sd or ld is mentioned:
+- both long day and short day plants historically flowered earlier than others
+- both long day and short day plants are flowering later with each passing year
+- long day plants are falling behind by 2.0 days per decade
+- short day plants are falling behind by 6.4 days per decade, almost a week!
+
+Less important observations:
+- plants in general are advancing at 2.4 days per decade
+- plants in general flower 1.5 days later for every degree they are away from the equator
+
+#look at each photoperiod group seperately in case it helps
 ```{r}
 lm_na <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_photoperiodism == "na")
 
@@ -121,20 +142,19 @@ lm_sd <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_p
 
 lm_ld <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_photoperiodism == "ld")
 
-test <- summary(lm_na)
+summary(lm_na)
 summary(lm_sd)
 summary(lm_ld)
-
-lm_ld$c
 ```
+These trends seem to be pretty consistent with our initial results.
 
-from these summaries we can identify the individual movement of each group over time.
+The one difference is that in the long-day plants, year does not have a significant effect on flowering time. However, it is very close and our main analysis (that gives the model more information about the additional effects) says the effect exists, so we can conclude that the effect is small but significant. 
 
 #plot graph
 ```{r}
 ggplot.photogroups <- 
-  ggplot(df_final)+
-  geom_point(aes(y=doy, x = year, colour = simple_photoperiodism), size = 1, alpha = 0.2)+
+  ggplot(subset(df_final))+
+  geom_point(aes(y = doy, x = year, colour = simple_photoperiodism), size = 1, alpha = 0.2)+
   xlab("Year")+
   ylim(-4, 366)+
   xlim(1950, 2017)+
