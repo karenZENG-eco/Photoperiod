@@ -2,4 +2,14 @@
 .Rhistory
 .RData
 .Ruserdata
-photoperiod/data
+
+#data available elsewhere
+photoperiod/data/
+
+#not my code, for phylosignal please read (and cite) https://doi.org/10.1093/bioinformatics/bty800
+
+photoperiod/R/delta_statistic-master/
+
+#there's a lot of draft graphs that don't need to be seen.
+#for most of the project I didn't realise you could rescale in Rnotebook output
+photoperiod/figures/deprecated graphs/

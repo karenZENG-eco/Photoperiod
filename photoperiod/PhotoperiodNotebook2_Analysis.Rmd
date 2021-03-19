@@ -11,6 +11,7 @@ Photoperiod data:
 - reference: source of information
 - notes: additional notes on photoperiod sensitivity
 - sensitivity_yn: binary variable of whether photoperiod sensitivity in any form exists in species
+- order: order in which records are considered, non cultivars and more specific records are prioritised
 
 Flowering time data:
 - species
@@ -22,39 +23,35 @@ Flowering time data:
 library(tidyverse)
 library(ggplot2) #for graphs
 
+library(viridis)
+mypalette = viridis(12) #viridis over 12 segments, 1=yellow 4=green 8=blue 12=purple
+
 pp <- read.csv("./Data/appendix1.csv") #read in photoperiod data
-pp$species <- gsub("_", " ",pp$species)
 
 pp <- pp %>% 
-  group_by(species)%>% #for each location*year*species combination,
-  slice(which.min(doy))  #find first flowering each degree cell
+  group_by(species)%>% #for each species
+  slice(which.min(order))  #find most accurate photoperiod record
 
 ft <- read.csv("./data/appendix2.csv") #read completed flowering time data
 
-df <- left_join(ft, pp, by = "species")
+df <- left_join(ft, pp, by = "species") #join the two datasets
 rm(pp)
 rm(ft)
 
 ```
-
-#remove data without long, short or no daylenth requirement. This is mostly because they have multiple requirements in a specific order.
+#Remove unused records and relevel factors so day neutral is the base.
 
 ```{r}
+df <- df %>% subset(simple_photoperiodism != "other")#remove data without long, short or no daylenth requirement. 
+
 df$simple_photoperiodism <- as.factor(df$simple_photoperiodism) #make it a factor
 df$simple_photoperiodism <- relevel(df$simple_photoperiodism, "na") #relevel so na is the reference factor
-
-df_final <- df %>%
-  filter(simple_photoperiodism != "other") #filter
 ```
 
-#a quick summary of our data
+#a quick summary and map of our data
 ```{r}
 summary(df_final)
-```
 
-
-#map data
-```{r}
 library(sf) #for applying graphs to spatial data (simple version of sp)
 library(rgeos) #for gCentroid()
 library(rworldmap) #for getMap()
@@ -64,31 +61,34 @@ map_base <- ggplot() + #specify map base
   borders("world", colour="gray50", fill="gray50")
 
 map_pp <- map_base + #use map base
-  geom_jitter(data = df_final, aes(x = lon, y = lat, colour = simple_photoperiodism), size = 0.05, alpha = 0.1, shape = 1) +#layer points on map
+  geom_jitter(data = df, aes(x = lon, y = lat, colour = simple_photoperiodism), size = 0.05, alpha = 0.1, shape = 1, width = 0.4, height = 0.15) +#layer points on map
   xlim(-125, 45)+ #set x limits based on summary
   ylim(20, 65)+#set y limits based on summary
-  guides(colour = guide_legend(override.aes = list(size = 1, alpha = 1))) #override the transparency and size to make legend readable
+  guides(colour = guide_legend(override.aes = list(size = 1, alpha = 1)))+ #override the transparency and size to make legend readable
+  scale_color_viridis(discrete = T, begin = 0.3) #add colour theme
 
 map_pp
 
 ```
-#Analyse data
 
+#Analyse data
 ```{r}
-library(tidyverse)
-library(lme4)
-library(lmerTest)
+library(tidyverse) #easy manipulation
+library(lme4) #mixed models
+library(lmerTest) #p-values in summary()
 
 #lm_basic <- lmer(doy ~ sensitivity_yn*year + (1|species), data = df) #original model with species and binary sensitivity
 
-#lm_groups <- lmer(doy ~ simple_photoperiodism*year + (1|species), data = df) #improved model with species and groups of sensitivity
+lm_binary <- lmer(doy ~ sensitivity_yn*year-1 + (1|species) + lat:sensitivity_yn, data = df) #improved model with latitude as fixed effect and nicer looking intercepts
 
-#lm_latitude <- lmer(doy ~ sensitivity_yn*year + (1|species) + lat, data = df) #improved model as above with latitude as fixed effect
+lm_final_init <- lmer(doy ~ simple_photoperiodism*year-1 + (1|species) + lat, data = df)#improved model with photoperiod groups instead of binary but single latitude effect
 
-lm_final <- lmer(doy ~ simple_photoperiodism*year + (1|species) + lat, data = df_final)#improved model with all aspects of previous models with 'other' group removed
+lm_comparison <- lmer(doy ~ year + (1|species) + lat:simple_photoperiodism, data = df) #comparison model to lm_final with photoperiodism removed as variable
 
-lm_comparison <- lmer(doy ~ year + (1|species) + lat, data = df_final) #comparison model to lm_final with photoperiodism removed as variable
+lm_final <- lmer(doy ~ simple_photoperiodism*year-1 + (1|species) + lat:simple_photoperiodism, data = df)#improved model with seperate latitude effects
 
+summary(lm_final)
+summary(lm_binary)
 ```
 
 #check assumptions of model
@@ -98,7 +98,7 @@ qqline(resid(lm_final)) #add line
 
 hist(resid(lm_final), breaks = 25) #look at normality of residuals
 ```
-The qq plot seems heavy tailed at the start but after looking at the histogram, the proportion of samples in the tail is very small compared to the main section, which fits pretty well. 
+The qq plot seems a bit heavy tailed at the start but after looking at the histogram, the proportion of samples in the tail is very small compared to the main section, which fits pretty well. 
 
 #Comparing our final model with the others
 To determine whether photoperiod information improves our flowering time model, let's see compare the pair
@@ -114,52 +114,66 @@ The AICs on their own suggest that photoperiod does improve the model, and the A
 ```{r}
 library(pbkrtest)
 
-bootstrap <- PBmodcomp(lm_final, lm_comparison, nsim = 599) #bootstrap comparison
+bootstrap <- PBmodcomp(lm_final, lm_comparison, nsim = 5999) #bootstrap comparison
 bootstrap
 ```
-So now we've confirmed that photoperiodism ihas an effect on flowering time. 
+Yes they are significantly different
+
+So now we've confirmed that photoperiodism has an effect on flowering time. 
 Let's look at the details
 
 #Look at what our model tells us
 ```{r}
 summary(lm_final) #look at our model
 ```
-We have a lot of variable to unpack, so remembering that no photoperiodism is the baseline for when sd or ld is mentioned:
-- both long day and short day plants historically flowered earlier than others
-- both long day and short day plants are flowering later with each passing year
-- long day plants are falling behind by 2.0 days per decade
-- short day plants are falling behind by 6.4 days per decade, almost a week!
+We have a lot of variable to unpack, so remembering that day neutral is the baseline for when sd or ld is mentioned:
 
-Less important observations:
-- plants in general are advancing at 2.4 days per decade
-- plants in general flower 1.5 days later for every degree they are away from the equator
+- base flowering time advancement is -0.09 days/year
+- ld plants have a modifier of +0.11 days/year, so they move +0.2 days/year
+- sd plants have no significant modifier, so they move the same as the base -0.09 days/year
 
-#look at each photoperiod group seperately in case it helps
+- latitude has an effect of +1.1 days/degree for ld and na plants
+- but a very different -3.7 days/degree for short day plants!
+
+#look at each photoperiod group seperately and in emtrends to check the main results
 ```{r}
-lm_na <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_photoperiodism == "na")
+lm_na <- lmer(doy ~ year + (1|species) + lat, data = df, subset = simple_photoperiodism == "na")
 
-lm_sd <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_photoperiodism == "sd")
+lm_sd <- lmer(doy ~ year + (1|species) + lat, data = df, subset = simple_photoperiodism == "sd")
 
-lm_ld <- lmer(doy ~ year + (1|species) + lat, data = df_final, subset = simple_photoperiodism == "ld")
+lm_ld <- lmer(doy ~ year + (1|species) + lat, data = df, subset = simple_photoperiodism == "ld")
 
+#DAY NEUTRAL
 summary(lm_na)
+#SHORT DAY
 summary(lm_sd)
+#LONG DAY
 summary(lm_ld)
+
 ```
+#checking the differences between the groups
+
+```{r}
+library(emmeans)
+emtrends(lm_final, pairwise~simple_photoperiodism, var = "year")
+```
+
 These trends seem to be pretty consistent with our initial results.
 
-The one difference is that in the long-day plants, year does not have a significant effect on flowering time. However, it is very close and our main analysis (that gives the model more information about the additional effects) says the effect exists, so we can conclude that the effect is small but significant. 
-
-#plot graph
+#plot graphs
 ```{r}
+library(viridis) #load a nice and colourblind-friendly palette
+
+mypalette = viridis(12) #viridis again
+
 ggplot.photogroups <- 
-  ggplot(subset(df_final))+
+  ggplot(subset(df))+
   geom_point(aes(y = doy, x = year, colour = simple_photoperiodism), size = 1, alpha = 0.2)+
   xlab("Year")+
   ylim(-4, 366)+
   xlim(1950, 2017)+
   ylab("Average First Flowering Day")+
-  guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE))+
+  guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE)) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
@@ -167,6 +181,88 @@ ggplot.photogroups <-
         axis.text = element_text(size = 10),
         axis.title = element_text(size = 15, face  = "bold"))
 
-ggplot.photogroups
+ggplot.species <- ggplot(subset(df))+
+  geom_smooth(aes(y = doy, x = year, group = species, colour = simple_photoperiodism), method = "lm", se = F)+
+  xlab("Year")+
+  ylim(-4, 366)+
+  xlim(1950, 2017)+
+  ylab("Average First Flowering Day")+
+  scale_color_viridis(discrete = T) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 15, face  = "bold"))
 ```
+
+#graph each simple photogroup with the following details:
+- trendline info from individual lm models
+- trendline assumes mean latitude for each group
+
+#best to print 8*6
+```{r}
+ggplot.photogroups.main <- 
+  ggplot(df)+
+  geom_point(aes(y = doy, x = year, 
+                 colour = simple_photoperiodism, 
+                 shape = simple_photoperiodism), 
+             size = 1, alpha = 0.5)+
+  scale_shape_manual(name = "Photoperiod Sensitivity", 
+                     values = c(3, 1, 2), # o,+,x
+                     labels = c("Day Neutral", "Long Day","Short Day"))+
+  scale_colour_manual(name = "Photoperiod Sensitivity", 
+                      values = c(mypalette[3], mypalette[8], mypalette[11]),
+                      labels = c("Day Neutral", "Long Day", "Short Day")) +
+  geom_segment(aes(x = 1950, y = 135.3, xend = 2017, yend = 129.0), colour = mypalette[3], size = 1)+ #na
+    geom_segment(aes(x = 1950, y = 146.9, xend = 2017, yend = 148.1), colour = mypalette[5], size = 1)+ #ld
+    geom_segment(aes(x = 1950, y = 172.1, xend = 2017, yend = 162.5), colour = mypalette[10], size = 1)+ #sd 
+  xlab("Year")+
+  ylim(-1, 366)+
+  xlim(1949, 2017)+
+  ylab("Average First Flowering Day")+
+  guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE), shape = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 15, face  = "bold"),
+        plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"))
+
+```
+
+#a graph with no transparency in the points to pull the legend from
+```{r}
+#no other
+ggplot.photogroups.legend <- 
+  ggplot()+
+  geom_point(aes(y = doy, x = year, colour = simple_photoperiodism), size = 3, alpha = 1)+
+  scale_colour_manual(values = c(mypalette[3], mypalette[8], mypalette[11]), labels = c("Day Neutral", "Long Day","Short Day"))+
+  xlab("Year")+
+  ylim(-4, 366)+
+  xlim(1950, 2017)+
+  ylab("Average First Flowering Day")+
+  guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 15, face  = "bold"),
+        plot.margin = margin(1, 1, 1, 1, "cm"))
+
+```
+
+```{r}
+#average latitude of all points
+mean(df$lat)
+
+#average latitude grouped by photoperiod binary
+df %>% group_by(sensitivity_yn)%>% summarize(mean = mean(lat, na.rm = TRUE))
+
+#average latitude grouped by photoperiod sensitivity
+df %>% group_by(simple_photoperiodism)%>% summarize(mean = mean(lat, na.rm = TRUE))
+```
+
 
