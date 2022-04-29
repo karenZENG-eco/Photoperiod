@@ -15,3 +15,6 @@ photoperiod/R/delta_statistic-master/
 #there's a lot of draft graphs that don't need to be seen.
 #for most of the project I didn't realise you could rescale in Rnotebook output
 photoperiod/figures/deprecated graphs/
+*.html
+photoperiod/qqnorm without sunflowers.pdf
+*.pdf

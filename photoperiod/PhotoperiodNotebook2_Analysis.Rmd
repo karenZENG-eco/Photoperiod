@@ -50,7 +50,7 @@ df$simple_photoperiodism <- relevel(df$simple_photoperiodism, "na") #relevel so 
 
 #a quick summary and map of our data
 ```{r}
-summary(df_final)
+summary(df)
 
 library(sf) #for applying graphs to spatial data (simple version of sp)
 library(rgeos) #for gCentroid()
@@ -79,16 +79,18 @@ library(lmerTest) #p-values in summary()
 
 #lm_basic <- lmer(doy ~ sensitivity_yn*year + (1|species), data = df) #original model with species and binary sensitivity
 
-lm_binary <- lmer(doy ~ sensitivity_yn*year-1 + (1|species) + lat:sensitivity_yn, data = df) #improved model with latitude as fixed effect and nicer looking intercepts
+#lm_binary <- lmer(doy ~ sensitivity_yn*year-1 + (1|species) + lat:sensitivity_yn, data = df) #improved model with latitude as fixed effect
 
-lm_final_init <- lmer(doy ~ simple_photoperiodism*year-1 + (1|species) + lat, data = df)#improved model with photoperiod groups instead of binary but single latitude effect
+#lm_final_init <- lmer(doy ~ simple_photoperiodism*year-1 + (1|species) + lat, data = df)#improved model with photoperiod groups instead of binary but single latitude effect
 
-lm_comparison <- lmer(doy ~ year + (1|species) + lat:simple_photoperiodism, data = df) #comparison model to lm_final with photoperiodism removed as variable
+#lm_comparison <- lmer(doy ~ year + (1|species) + lat:simple_photoperiodism, data = df) #comparison model to lm_final with photoperiodism removed as variable
 
-lm_final <- lmer(doy ~ simple_photoperiodism*year-1 + (1|species) + lat:simple_photoperiodism, data = df)#improved model with seperate latitude effects
+lm_final <- lmer(doy ~ simple_photoperiodism*year-1 + (1|species) + lat:simple_photoperiodism, data = df)#improved model with all changes as above and seperate latitude effects
+
+#summary(lm_basic)
 
 summary(lm_final)
-summary(lm_binary)
+
 ```
 
 #check assumptions of model
@@ -263,6 +265,50 @@ df %>% group_by(sensitivity_yn)%>% summarize(mean = mean(lat, na.rm = TRUE))
 
 #average latitude grouped by photoperiod sensitivity
 df %>% group_by(simple_photoperiodism)%>% summarize(mean = mean(lat, na.rm = TRUE))
+```
+#Additional main analysis that accounts for phylogeny
+
+#nevermind, phyr is not the best package for this task...
+
+Before running this code, run the photoperiod notebook 3 code until tree and pp_sorted is created.
+
+```{r}
+library(phyr)
+```
+
+##add phylogenetic data to df
+
+```{r}
+df <- list(phy = tree, data = df) #combine the phylogenetic tree and dataframe into one
+
+df$data$species <- gsub(" ", "_", df$data$species)  #add column called sp which is just species name for the code to recognise
+```
+
+#filtering out data with corresponding information.
+
+```{r}
+dflist <- unique(df$data$species) #get a list of species before filtering to check
+treelist <- df$phy$tip.label #get a list of species in our tree
+
+specieslist <- intersect(dflist, treelist) #which species are in both lists?
+
+df$data <- df$data %>% filter(species %in% specieslist) #remove data with no phylogenetic information available :'(
+
+df$phy <-keep.tip(df$phy, specieslist) #remove tree parts with no photoperiod data available as well :''(
+
+rm(treelist)#clean up environment by removing unused lists
+rm(dflist)
+```
+
+Unfortunately, we have to go from 88 species to 78 species because we didn't have a solid phylogenetic tree with branch lengths for 10 of our species.
+
+##re-run glmm with phylo component instead of species
+```{r}
+lm_phylo <- pglmm(doy ~ simple_photoperiodism*year-1 + (1|sp__) + lat:simple_photoperiodism, 
+                  data = df, 
+                  family = "poisson",
+                  cov_ranef = list(sp = tree), add.obs.re = FALSE)
+
 ```
 
 

@@ -301,7 +301,7 @@ This analysis was not used in the final product after switching to a more detail
 
 The below analysis was used instead.
 
-First, to prepare the tree for analysis by setting a minimum branch length of 0.001 so the tree is dichotomous and doesn't have multichotomies. We will also repeat analysis where instead of forcing a positive value to zero branch lengths we will drop them entirely (tree2)
+First, to prepare the tree for analysis by setting a minimum branch length of 0.001 so the tree is dichotomous and doesn't have multichotomies. We will also repeat analysis where instead of forcing a positive value to zero branch lengths we will drop them entirely (tree2) in case it makes a difference.
 
 ```{r}
 tree <- multi2di(tree) #make tree dichotomous
@@ -350,7 +350,7 @@ source("./R/delta_statistic-master/code.R")
 #se      <- 0.5   #standard deviation of the proposal
 #sim     <- 10000 #number of iterations
 #thin    <- 10    #we kept only each 10th iterate 
-#burn    <- 100   #100 iterates are burned-in
+#burn    <- 100   #100 iterates are 'burned-in'
 
 delta_stat <- delta(trait = pp_sorted$simple_photoperiodism, #calculate delta
                     lambda0 = 0.1,
