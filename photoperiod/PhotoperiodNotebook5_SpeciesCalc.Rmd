@@ -230,10 +230,6 @@ aov_species_summary_finite2 <- phylANOVA(tree = tree2, x = simple_photoperiodism
 
 aov_species_summary_NOPHYLO2 <- aov(year_effect ~ simple_photoperiodism, data = species_summary2)
 
-t.test()
-t.test()
-t.test()
-t.test()
 
 #post-hoc pairwise t tests
 
