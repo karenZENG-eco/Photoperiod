@@ -3,6 +3,11 @@ title: "Photoperiod Notebook"
 output: html_notebook
 ---
 
+This code filters and combines all the flowering time datasets that we were able to use in our analysis. The raw data is either published or available upon request from the sources listed below, but we were also kindly allowed to include enough data to perform further analyses in the form of appendix 2.
+
+For more information, please contact:
+karen.zeng@unsw.edu.au
+
 #1: Read in required packages and data
 ```{r}
 library(tidyverse)
@@ -23,10 +28,10 @@ apply_study_scope <- function(df) {
 }
 ```
 
-NOTE: each source is processed seperately to avoid the "Unknown or uninitialised column" error likely associated with too much in the environment (aka we try to remove unecessary data points as early as possible). If you still get errors running this code, restart R and skip to the the second notebook; where we read straight from the appendix located with the published data ([add data repository link here])
+NOTE: each source is processed seperately to avoid the "Unknown or uninitialised column" error likely associated with too much in the environment (aka we try to remove unecessary data points as early as possible). If you still get errors running this code, restart R and skip to the the second notebook; where we read straight from the appendix located with the published data
 
 
-#2: Craine, J.M., Wolkovich, E.M., Gene Towne, E. and Kembel, S.W., 2012. Flowering phenology as a functional trait in a tallgrass prairie. New Phytologist, 193(3), pp.673-682.
+#2: (NOTE THAT CRAINE DATA WAS EXCLUDED AFTER WE REALISED IT WAS ALL COLLECTED IN ONE YEAR) Craine, J.M., Wolkovich, E.M., Gene Towne, E. and Kembel, S.W., 2012. Flowering phenology as a functional trait in a tallgrass prairie. New Phytologist, 193(3), pp.673-682.
 ```{r}
 craine <- read.csv("./data/raw/Craine2012/craine_2012.csv")
 
@@ -395,15 +400,3 @@ rm(apply_study_scope)
 rm(pplist)
 rm(flowering_time)
 ```
-
-#extra code to add simple photoperiod section for analyses
-```{r}
-pp <- read.csv("./data/appendix1.csv")
-pp$simple_photoperiodism <- "other" #new column simplifying photoperiodism
-pp$simple_photoperiodism[pp$photoperiodism == "ld"] <- "ld"
-pp$simple_photoperiodism[pp$photoperiodism == "sd"] <- "sd"
-pp$simple_photoperiodism[pp$photoperiodism == "na"] <- "na"
-write.csv(pp,"./data/appendix1.csv", row.names = F)
-rm(pp)
-```
-

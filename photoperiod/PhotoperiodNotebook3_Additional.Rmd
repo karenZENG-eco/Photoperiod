@@ -3,24 +3,28 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-###PHOTOPERIOD SENSITIVITY AND TRAITS
+This code analyses whether woodiness or life history is correlated with the different types of photoeperiod sensitivity cues in flowering. 
 
-#load photoperiod sensitivity data
+For more information, please contact:
+karen.zeng@unsw.edu.au
+
+##load packages
 ```{r}
 library(tidyverse)
-library(ggplot2) #for graphs
-library(viridis) #for colours
+#library(ggplot2) #for graphs
+#library(viridis) #for colours
 
-viridis(12, direction = -1) #create palette
-
-pp <- read.csv("./data/appendix1.csv") #read in photoperiod data
-
-pp <- pp %>% 
-  group_by(species)%>% #for each species
-  slice(which.min(order))  #find most accurate photoperiod record
+#library(viridis)
+#mypalette = viridis(12) #viridis over 12 segments, 1=yellow 4=green 8=blue 12=purple
 ```
 
-#load woodiness and longevity data from [GlobalWoodinessDatabase] and [TRY]
+##load photoperiod sensitivity data and filter out complex photoperiod categories
+```{r}
+pp <- read.csv("./data/appendix1.csv") #read in photoperiod data
+pp <- pp %>% filter(photoperiodism == "sd" |photoperiodism == "ld" | photoperiodism == "na")
+```
+
+##load woodiness data from [GlobalWoodinessDatabase]
 ```{r}
 wood <- read.csv("./data/GlobalWoodinessDatabase.csv")
 
@@ -30,7 +34,10 @@ wood$woodiness[wood$woodiness == "H"] <- "herbaceous"
 wood$woodiness[wood$woodiness == "W"] <- "woody"
 
 table(wood$woodiness)
+```
 
+##load longevity data from [TRY]
+```{r}
 longevity <- read.csv(file = "./data/TRYlongevity.csv")
 
 longevity <- longevity %>% 
@@ -82,12 +89,10 @@ longevity <- na.omit(longevity) #remove NAs
 
 longevity <- longevity[!duplicated(longevity$species), ] #remove duplicates
 
-longevity$simple_photoperiodism <- factor(longevity$simple_photoperiodism, levels = c("sd", "ld", "na")) #relevel factors for consistency
-
+table(longevity$life_history)
 ```
 
-
-#combine the datasets
+##combine the datasets
 ```{r}
 pp <- left_join(pp, wood, by = "species") #attach woodiness dataset to main 
 pp <- left_join(pp, longevity, by = "species") #attach longevity dataset to main
@@ -96,21 +101,19 @@ rm(longevity) #remove both datasets from environment
 rm(wood)
 ```
 
-
-
 #Life History Analysis
 ```{r}
 longevity <- pp %>% #Tally life histories
   filter(!is.na(life_history))%>% #remove records without life history
-  filter(simple_photoperiodism != "other") %>% #remove records with unclear photoperiodism
-  group_by(simple_photoperiodism, life_history) %>%
+  filter(photoperiodism != "other") %>% #remove records with unclear photoperiodism
+  group_by(photoperiodism, life_history) %>%
   tally()
 
 longevity_chisq <- chisq.test(longevity$n) #Perform chi-square test
 
 perennial_pie <- longevity %>% #choose our dataframe
   filter(life_history == "perennial") %>% #Filter so we are only looking perennials
-  ggplot(aes(x = "", y = n, fill = simple_photoperiodism)) + #single graph split by proportion of photoperiod sensitivity
+  ggplot(aes(x = "", y = n, fill = photoperiodism)) + #single graph split by proportion of photoperiod sensitivity
   ggtitle("Perennial")+ #add title
   geom_bar(width = 1, stat = "identity") + #make it a bar graph
   theme_minimal() + #removes most of the background fluff
@@ -123,12 +126,12 @@ perennial_pie <- longevity %>% #choose our dataframe
     axis.ticks = element_blank()
     ) +
   coord_polar("y", start=0)+ #turns bar chart into a pie
-  scale_fill_manual(values = c("sd"= mypalette[11], "ld"= mypalette[8], "na"= mypalette[3])) + #add colour
+  scale_fill_manual(values = c("sd"= "#FC4E07", "ld"= "#E7B800", "na"= "#00AFBB")) + #add colour
   labs(fill = "Photoperiod Sensitivity") #add labels
 
 annual_pie <- longevity %>% #choose our dataframe
   filter(life_history == "annual") %>% #Filter so we are only looking at annuals
-  ggplot(aes(x = "", y = n, fill = simple_photoperiodism)) + #single graph split by proportion of photoperiod sensitivity
+  ggplot(aes(x = "", y = n, fill = photoperiodism)) + #single graph split by proportion of photoperiod sensitivity
   ggtitle("Annual")+ #add title
   geom_bar(width = 1, stat = "identity") + #make it a bar graph
   theme_minimal() + #removes most of the background fluff
@@ -141,11 +144,11 @@ annual_pie <- longevity %>% #choose our dataframe
     axis.ticks = element_blank()
     ) +
   coord_polar("y", start=0)+ #turns bar chart into a pie
-  scale_fill_manual(values = c("sd"= mypalette[11], "ld"= mypalette[8], "na"= mypalette[3])) + #add colour
+  scale_fill_manual(values = c("sd"= "#FC4E07", "ld"= "#E7B800", "na"= "#00AFBB")) + #add colour
   labs(fill = "Photoperiod Sensitivity") #add labels
 ```
 
-Look at results
+#Look at life history results
 ```{r}
 longevity_chisq
 longevity_chisq$residuals
@@ -164,15 +167,15 @@ Annual species seem to be more likely to be photoperiod-sensitive overall, and s
 woodiness <- pp %>% #Tally woodiness
   filter(!is.na(woodiness))%>% #remove records without woodiness
   filter(woodiness != "variable") %>% #remove records with unclear woodiness
-  filter(simple_photoperiodism != "other") %>% #remove records with unclear photoperiodism
-  group_by(simple_photoperiodism, woodiness) %>%
+  filter(photoperiodism != "other") %>% #remove records with unclear photoperiodism
+  group_by(photoperiodism, woodiness) %>%
   tally()
 
 woodiness_chisq <- chisq.test(woodiness$n) #Perform chi-square test
 
 woody_pie <- woodiness %>% #choose our dataframe
   filter(woodiness == "woody") %>% #Filter so we are only looking at herbaceous species
-  ggplot(aes(x = "", y = n, fill = simple_photoperiodism)) + #single graph split by proportion of photoperiod sensitivity
+  ggplot(aes(x = "", y = n, fill = photoperiodism)) + #single graph split by proportion of photoperiod sensitivity
   ggtitle("Woody")+ #add title
   geom_bar(width = 1, stat = "identity") + #make it a bar graph
   theme_minimal() + #removes most of the background fluff
@@ -185,13 +188,13 @@ woody_pie <- woodiness %>% #choose our dataframe
     axis.ticks = element_blank()
     ) +
   coord_polar("y", start=0)+ #turns bar chart into a pie
-  scale_fill_manual(values = c("sd"= mypalette[11], "ld"= mypalette[8], "na"= mypalette[3])) + #add colour
+  scale_fill_manual(values = c("sd"= "#FC4E07", "ld"= "#E7B800", "na"= "#00AFBB")) + #add colour
   labs(fill = "Photoperiod Sensitivity") #add labels
 
 
 herbaceous_pie <- woodiness %>% #choose our dataframe
   filter(woodiness == "herbaceous") %>% #Filter so we are only looking at this type of plant
-  ggplot(aes(x = "", y = n, fill = simple_photoperiodism)) + #single graph split by proportion of photoperiod sensitivity
+  ggplot(aes(x = "", y = n, fill = photoperiodism)) + #single graph split by proportion of photoperiod sensitivity
   ggtitle("Herbaceous")+ #add title
   geom_bar(width = 1, stat = "identity") + #make it a bar graph
   theme_minimal() + #removes most of the background fluff
@@ -204,12 +207,12 @@ herbaceous_pie <- woodiness %>% #choose our dataframe
     axis.ticks = element_blank()
     ) +
   coord_polar("y", start=0)+ #turns bar chart into a pie
-  scale_fill_manual(values = c("sd"= mypalette[11], "ld"= mypalette[8], "na"= mypalette[3])) + #add colour
+  scale_fill_manual(values = c("sd"= "#FC4E07", "ld"= "#E7B800", "na"= "#00AFBB")) + #add colour
   labs(fill = "Photoperiod Sensitivity") #add labels
 
 ```
 
-Look at results
+#woodiness results
 ```{r}
 woodiness_chisq
 woodiness_chisq$residuals
@@ -221,320 +224,8 @@ herbaceous_pie
 ```
 Both herbaceous and woody species are just as likely to be photoperiod sensitive, but it seems that woody species are more likely to be short day, and conversely herbaceous species are more likely to be long-day.
 
-### PHYLOGENETIC SIGNAL ANALYSIS
-
-#load in photoperiod sensitivity data again
-```{r}
-library(viridis)#colour palette
-library(tidyverse)#general data manipulation
-library(ggplot2) #for graphs
-library(ggtree) #ggplot for phylogenetic trees
-
-library(ape) #read.tree(), ditomulti() and manipulating phylogenetic trees
-library(phylobase) #phylo4d objects
-
-#library(phytools)#phylosig()
-#library(caper) #phylo.d()
-#library(phylosignal)#phylogenetic signal
-
-library(picante)#phylogenetic signal for nonbinary traits
-
-
-mypalette <- viridis(12, direction = -1)
-
-pp <- read.csv("./data/appendix1.csv") #read in photoperiod data
-
-#remove other
-
-pp <- pp %>% 
-  group_by(species)%>% #for each species
-  subset(simple_photoperiodism != "other")%>% #remove records with complex photoperiod sensitivity
-  slice(which.min(order))  #find most accurate photoperiod record
-
-pp$species <- gsub(" ", "_", pp$species) #underscore is preferred over space when working with trees
-```
-
-#load in phylogenetic tree from smith and brown (2018) (https://doi.org/10.1002/ajb2.1019)
-```{r}
-  tree <- read.tree("./data/ALLMB.txt")
-
-  species_list <- pp$species #create list of species
-  
-  tree <- drop.tip(tree, tree$tip.label[-na.omit(match(species_list, tree$tip.label))]) # Prune tree by dropping all tips (species) that are not on our species list
-   
-  tree_order <- tree$tip.label #Sort the species data into the same order as the tree for graphing later on
-  pp_sorted <- data.frame(Reduce(rbind, tree_order)) #try to combine these two lines 
-  names(pp_sorted)[1] <- "species" #change column name
-  pp_sorted <- left_join(pp_sorted, pp, by = "species") #attach data to new order
-   
-  rm(pp) #remove unused parts
-  rm(species_list)
-  rm(tree_order)
-
-#    tree2=di2multi(tree) #fix multichotomies
-#    tree <- makeLabel(tree) #fix node error 
-    
-  tree4d <- phylo4d(tree, (pp_sorted$simple_photoperiodism))  
-       
-```
-
-#Fixing up the data: 
-I think I found a known error with clade names where un-named nodes are treated as having duplicated names.
-The fix was to numerically name each node so it has a unique name
-Workaround was found on: http://grokbase.com/t/r/r-sig-phylo/11ce1b8stn/doubts-and-problems-bug-when-using-comparative-data-and-pgls-functions-in-caper%E2%80%8F
-
-# binary photoperiod sensitivity phylogenetic signal (unused) that doesn't woprk for multiple levels of photoperiodism
-```{r}
-#tree4d_bin <- phylo4d(tree, (pp_sorted$sensitivity_yn))
-  
-#phylo.d(pp_sorted, tree, names.col = species, binvar = sensitivity_yn)#d statistic  
-
-#local.i <- lipaMoran(tree4d, prox.phylo = "nNodes", as.p4d = TRUE) #local phylogenetic signal
-#points.col <- lipaMoran(tree4d, prox.phylo ="nNodes")$p.value #EXTRACT PVAL
-#points.col <- ifelse(points.col < 0.05, "red", "black") #SIGNIFicant p val limit is 0.05
-
-#dotplot.phylo4d(local.i, dot.col = points.col)
-  
-```
-
-This analysis was not used in the final product after switching to a more detailed look at photoperiodism
-
-The below analysis was used instead.
-
-First, to prepare the tree for analysis by setting a minimum branch length of 0.001 so the tree is dichotomous and doesn't have multichotomies. We will also repeat analysis where instead of forcing a positive value to zero branch lengths we will drop them entirely (tree2) in case it makes a difference.
 
 ```{r}
-tree <- multi2di(tree) #make tree dichotomous
 
-tree$edge.length[tree$edge.length == 0] <- 0.001 #set edge lengths of zero to a number lower than the minimum
-
-tree2 <- tree #option to repeat analysis with multichomies dropped instead
-
-df_temp <- as.data.frame(tree2$edge)
-df_temp$edge_length <- tree2$edge.length
-multichotomy_nodes <-  df_temp$V1[df_temp$edge_length == 0.001]
-
-drop_list <- c("Calibrachoa_heterophylla") #start list
-
-for (i in multichotomy_nodes){
-  temp <- extract.clade(tree2, node = i)
-  drop_list <- c(drop_list, temp$tip.label)
-} #fill list of tips associated with nodes
-
-drop_list <- unique(drop_list) #make sure there aren't duplicates
-
-tree2 <- drop.tip(tree2, drop_list) #finally drop all tips associated with zero length edges
-
-pp_sorted2 <- pp_sorted[!(pp_sorted$species %in% drop_list),] #do the same for photoperiod data
-
-rm(df_temp)#cleanup
-rm(temp)
-rm(drop_list)
-rm(multichotomy_nodes)
-rm(i)
-```
-
-Next, to see if there is a signal
-
-Please download and add the entire folder for code for delta statistic into the R folder for this project before continuing to the next step. 
-
-Code for delta statistic from https://github.com/mrborges23/delta_statistic with methods adapted from associated publication at https://doi.org/10.1093/bioinformatics/bty800.
-
-Since the examples provided in the paper did not go up to our sample size (477), I generated my own comparison data. I compared the delta from our dataset to dummy datasets with phylogenetic signal partially or fully randomised.
-
-```{r}
-source("./R/delta_statistic-master/code.R")
-
-#SOME PARAMETERS from the example
-#lambda0 <- 0.1   #rate parameter of the proposal 
-#se      <- 0.5   #standard deviation of the proposal
-#sim     <- 10000 #number of iterations
-#thin    <- 10    #we kept only each 10th iterate 
-#burn    <- 100   #100 iterates are 'burned-in'
-
-delta_stat <- delta(trait = pp_sorted$simple_photoperiodism, #calculate delta
-                    lambda0 = 0.1,
-                    se = 0.5,
-                    sim = 10000,
-                    thin = 10,
-                    burn = 100,
-                    tree = tree
-                    )
-
-weakest_trait <- sample(pp_sorted$simple_photoperiodism)
-
-delta_weakest <- delta(trait = weakest_trait, #calculate delta but randomise all
-                    lambda0 = 0.1,
-                    se = 0.5,
-                    sim = 10000,
-                    thin = 10,
-                    burn = 100,
-                    tree = tree)
-
-
-weaker_trait <- pp_sorted$simple_photoperiodism # make copy of data
-random_half <- sample(1:477)[1:238]#randomly select half the rows
-for (i in random_half) {
- weaker_trait[i] <- weakest_trait[i]
-}#replace the selected half with the randomised trait values
-rm(random_half)
-
-delta_weaker <- delta(trait = weaker_trait, #calculate delta but randomise half
-                    lambda0 = 0.1,
-                    se = 0.5,
-                    sim = 10000,
-                    thin = 10,
-                    burn = 100,
-                    tree = tree)
-
-delta_stat 
-delta_weaker
-delta_weakest
-
-barplot(c(delta_stat, delta_weaker, delta_weakest), names.arg=c("Photoperiod", "Half Randomised", "Full Randomised"), ylab = "delta statistic", xlab = " Phylogenetic Signal Tests")
-```
-The delta statistic of photoperiod sensitivity as a three leveled trait is a lot higher than a model
-
-
-#repeat of analysis but with tree2
-```{r}
-delta_stat2 <- delta(trait = pp_sorted2$simple_photoperiodism, #calculate delta
-                    lambda0 = 0.1,
-                    se = 0.5,
-                    sim = 10000,
-                    thin = 10,
-                    burn = 100,
-                    tree = tree2
-                    )
-
-weakest_trait2 <- sample(pp_sorted2$simple_photoperiodism)
-
-delta_weakest2 <- delta(trait = weakest_trait2, #calculate delta but randomise all
-                    lambda0 = 0.1,
-                    se = 0.5,
-                    sim = 10000,
-                    thin = 10,
-                    burn = 100,
-                    tree = tree2)
-
-
-weaker_trait2 <- pp_sorted2$simple_photoperiodism # make copy of data
-random_half2 <- sample(1:344)[1:172]#randomly select half the rows
-for (i in random_half2) {
- weaker_trait2[i] <- weakest_trait2[i]
-}#replace the selected half with the randomised trait values
-rm(random_half2)
-
-delta_weaker2 <- delta(trait = weaker_trait2, #calculate delta but randomise half
-                    lambda0 = 0.1,
-                    se = 0.5,
-                    sim = 10000,
-                    thin = 10,
-                    burn = 100,
-                    tree = tree2)
-
-delta_stat2
-delta_weaker2
-delta_weakest2
-
-barplot(c(delta_stat2, delta_weaker2, delta_weakest2), names.arg=c("Photoperiod", "Half Randomised", "Full Randomised"), ylab = "delta statistic", xlab = " Multichotomies Dropped Comparison")
-```
-The numbers are a little different, but the result is the same, the delta statistic of photoperiod sensitivity is much higher than that of a trait with no phylogenetic signal.
-
-##Things i tried that didn't work as well
-```{r}
-phylosig(tree, pp_sorted$photoperiodism, method = "lambda") #doesn't work
-
-for (i in unique(pp_sorted_simplified$simple_photoperiodism)){
-  pp_sorted_simplified[,paste0(i)]=ifelse(pp_sorted_simplified$simple_photoperiodism==i,1,0)
-}
-rm(i) #for each type of photoperiodism, make a new column of presence/absence
-
-multiPhylosignal(x = pp_sorted_mps$simple_photoperiodism, phy = tree2, reps = 50)
-
-picante::phylosignal(pp_sorted_mps$simple_photoperiodism, tree2, reps = 50, checkdata = F)
-
-pp_sorted_mps <- pp_sorted[, c(1, 7)]
-
-
-pp_sorted_mps <- pp_sorted_mps[, -2] #drop simple_photoperiodism
-
-multiPhylosignal(x = pp_sorted_mps, phy = tree, reps = 50)
-
-testtree4d <- phylo4d(tree, (pp_sorted_simplified)) 
-
-```
-
-
-#prep to make graph
-```{r}
-tree4d@data[["dt"]] <- factor(tree4d@data[["dt"]], levels = c("sd", "ld", "na")) #relevel data for graphs
-
-tree_plot_rbase <- ggtree(tree4d)+
-  geom_tiplab(size = 1.8, offset = -0.9)
-```
-
-#graph with node labels to help with labels
-```{r}
-tree_plot_nodes <- tree_plot_rbase +
-  scale_fill_discrete(name="Photoperiod sensitivity") +
-  geom_tippoint(aes(color=dt), size=1.5, alpha=0.5, show.legend = NA)+
-  scale_color_manual(name = "Photoperiod sensitivity", 
-                     values = c(mypalette[11], mypalette[8], mypalette[3]))+
-  theme(legend.position = "none") + 
-  geom_text(aes(label=node), size = 2, hjust=-.3)
-```
-Print this in 20*40 to actually be able to read the nodes!
-
-#final colour key version of graph
-```{r}
-tree_plot_rectangular <- tree_plot_rbase +
-  scale_fill_discrete(name="Photoperiod sensitivity") +
-  geom_tippoint(aes(color=dt), size=1.5, alpha= 1, show.legend = NA)+
-  scale_color_manual(name = "Photoperiod sensitivity", 
-                     values = c(mypalette[11], mypalette[8], mypalette[3]))+
-  theme(legend.position = "none") + #labels
-    geom_strip(taxa1 = 199, taxa2 = 200, 
-               barsize = 0.8, offset = 14,
-               color = mypalette[8],
-               label = " Calibrochoa")+ 
-    geom_strip(taxa1 = 40, taxa2 = 64, 
-               barsize = 0.8, offset = 22,
-               color = "gray",
-               label = " Faboideae")+ 
-    geom_strip(taxa1 = 40, taxa2 = 47, 
-               barsize = 0.8, offset = 14,
-               color = mypalette[8],
-               label = " IRLC")+ 
-    geom_strip(taxa1 = 56, taxa2 = 64, 
-               barsize = 0.8, offset = 14,
-               color = mypalette[11],
-               label = " MILL")+ 
-    geom_strip(taxa1 = 24, taxa2 = 25, 
-               barsize = 0.8, offset = 14,
-               color = mypalette[3],
-               label = " Geum")+ 
-    geom_strip(taxa1 = 399, taxa2 = 435, 
-               barsize = 0.8, offset = 14,
-               color = "gray",
-               label = " Poöideae")
-
-tree_plot_rectangular
-```
-
-#make circular graph as well for fun
-```{r}
-tree_plot_cbase <- ggtree(tree4d, layout = "circular")+#make circular tree
-    geom_tiplab2(size = 1.5, offset = 1)#add species names
-
-tree_plot_circle <- tree_plot_cbase +
-  geom_tippoint(aes(color=dt), size=1.5, alpha=.75, show.legend = NA)+
-  scale_color_manual(values = c(mypalette[11], mypalette[8], mypalette[3]))+
-  scale_fill_discrete(name="Photoperiod sensitivity",
-                         labels=c("Short day", "Long day", "Day neutral"))+
-  theme(legend.position = "none")
-  
-tree_plot_cbase
-tree_plot_circle
 ```
 

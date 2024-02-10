@@ -1,0 +1,336 @@
+---
+title: "PhotoperiodNotebook4_PhylogeneticSignal"
+output: html_notebook
+---
+
+This code analyses whether there is a phylogenetic signal in flowering photoperiod cues using the tree constructed by Smith and Brown (2018) (https://doi.org/10.1002/ajb2.1019). 
+
+It also graphs the large phylogenetic tree with floral photoperiod type (the colours on the tree tips).
+
+For more information, please contact:
+karen.zeng@unsw.edu.au
+
+#installing ggtree if running for the first time
+```{r}
+#if (!require("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+
+#BiocManager::install("ggtree")
+```
+
+
+##load in packages
+```{r}
+library(tidyverse)#general data manipulation
+library(ggplot2) #for graphs
+library(ggtree) #ggplot for phylogenetic trees
+
+library(ape) #read.tree(), ditomulti(), delta statistics and manipulating phylogenetic trees
+library(phylobase) #phylo4d objects
+
+#library(viridis)#colour palette
+#mypalette <- viridis(12, direction = -1)
+
+#library(phytools)#phylosig()
+#library(caper) #phylo.d()
+#library(phylosignal)#phylogenetic signal
+
+#library(picante)#phylogenetic signal for nonbinary traits
+```
+
+read in data
+```{r}
+pp <- read.csv("./data/appendix1.csv") #read in photoperiod data
+
+pp <- pp %>% 
+  group_by(species)%>% #for each species
+  slice(which.min(order))  #find most accurate photoperiod record
+```
+
+make simple photoperiodism column and remove 'other'
+```{r}
+pp$simple_photoperiodism <- "other" #if something is not ld, sd or na it will be grouped as 'other'
+pp$simple_photoperiodism[pp$photoperiodism == "na"] <-"na"
+pp$simple_photoperiodism[pp$photoperiodism == "sd"] <-"sd"
+pp$simple_photoperiodism[pp$photoperiodism == "ld"] <-"ld"
+
+pp <- pp[pp$simple_photoperiodism != "other",] #filter out 'other' group
+
+pp$photoperiodism <- factor(pp$photoperiodism, levels = c("sd", "ld", "na"))
+```
+
+```{r}
+pp <- pp %>% 
+  group_by(species)%>% #for each species
+  slice(which.min(order))  #find most accurate photoperiod record
+
+pp$species <- gsub(" ", "_", pp$species) #underscore is preferred over space when working with trees
+```
+
+#load in phylogenetic tree from smith and brown (2018) (https://doi.org/10.1002/ajb2.1019)
+```{r}
+  tree <- read.tree("./data/ALLMB.txt")
+
+  species_list <- pp$species #create list of species
+  
+  tree <- drop.tip(tree, tree$tip.label[-na.omit(match(species_list, tree$tip.label))]) # Prune tree by dropping all tips (species) that are not on our species list
+   
+  tree_order <- tree$tip.label #Sort the species data into the same order as the tree for graphing later on
+  pp_sorted <- data.frame(Reduce(rbind, tree_order)) #try to combine these two lines 
+  names(pp_sorted)[1] <- "species" #change column name
+  pp_sorted <- left_join(pp_sorted, pp, by = "species") #attach data to new order
+   
+  rm(pp) #remove unused parts
+  rm(species_list)
+  rm(tree_order)
+
+#    tree2=di2multi(tree) #fix multichotomies
+#    tree <- makeLabel(tree) #fix node error 
+    
+#  tree4d <- phylo4d(tree, (pp_sorted$simple_photoperiodism))  
+       
+```
+
+First, to prepare the tree for analysis by setting a minimum branch length of 0.001 so the tree is dichotomous and doesn't have multichotomies. We also have code in notebook 0 to repeat analysis where instead of forcing a positive value to zero branch lengths we will drop them entirely (tree2) in case it makes a difference. Spoilers: it causes errors later down the line in the analysis.
+
+```{r}
+tree2 <- tree #option to repeat analysis with multichomies dropped instead
+
+tree <- multi2di(tree) #make tree dichotomous
+
+tree$edge.length[tree$edge.length == 0] <- 0.001 #set edge lengths of zero to a number lower than the minimum
+
+
+df_temp <- as.data.frame(tree2$edge)
+df_temp$edge_length <- tree2$edge.length
+multichotomy_nodes <-  df_temp$V1[df_temp$edge_length == 0.001]
+
+drop_list <- c("Calibrachoa_heterophylla") #start list
+
+for (i in multichotomy_nodes){
+  temp <- extract.clade(tree2, node = i)
+  drop_list <- c(drop_list, temp$tip.label)
+} #fill list of tips associated with nodes
+
+drop_list <- unique(drop_list) #make sure there aren't duplicates
+
+tree2 <- drop.tip(tree2, drop_list) #finally drop all tips associated with zero length edges
+
+pp_sorted2 <- pp_sorted[!(pp_sorted$species %in% drop_list),] #do the same for photoperiod data
+
+rm(df_temp)#cleanup
+rm(drop_list)
+rm(multichotomy_nodes)
+rm(i)
+```
+
+Next, to see if there is a signal
+
+Please download and add the entire folder for code for delta statistic into the R folder for this project before continuing to the next step. 
+
+Code for delta statistic from https://github.com/mrborges23/delta_statistic with methods adapted from associated publication at https://doi.org/10.1093/bioinformatics/bty800.
+
+Since the examples provided in the paper did not cover our larger sample size (477), I generated my own comparison data. I compared the delta from our dataset to dummy datasets with phylogenetic signal partially or fully randomised.
+
+```{r}
+source("./R/delta_statistic-master/code.R")
+
+#SOME PARAMETERS from the example
+#lambda0 <- 0.1   #rate parameter of the proposal 
+#se      <- 0.5   #standard deviation of the proposal
+#sim     <- 10000 #number of iterations
+#thin    <- 10    #we kept only each 10th iterate 
+#burn    <- 100   #100 iterates are 'burned-in'
+
+delta_stat <- delta(trait = pp_sorted$simple_photoperiodism, #calculate delta
+                    lambda0 = 0.1,
+                    se = 0.5,
+                    sim = 10000,
+                    thin = 10,
+                    burn = 100,
+                    tree = tree
+                    )
+
+weakest_trait <- sample(pp_sorted$simple_photoperiodism)
+
+delta_weakest <- delta(trait = weakest_trait, #calculate delta but randomise all
+                    lambda0 = 0.1,
+                    se = 0.5,
+                    sim = 10000,
+                    thin = 10,
+                    burn = 100,
+                    tree = tree)
+
+
+weaker_trait <- pp_sorted$simple_photoperiodism # make copy of data
+random_half <- sample(1:477)[1:238]#randomly select half the rows
+for (i in random_half) {
+ weaker_trait[i] <- weakest_trait[i]
+}#replace the selected half with the randomised trait values
+rm(random_half)
+
+delta_weaker <- delta(trait = weaker_trait, #calculate delta but randomise half
+                    lambda0 = 0.1,
+                    se = 0.5,
+                    sim = 10000,
+                    thin = 10,
+                    burn = 100,
+                    tree = tree)
+
+delta_stat 
+delta_weaker
+delta_weakest
+
+barplot(c(delta_stat, delta_weaker, delta_weakest), names.arg=c("Photoperiod", "Half Randomised", "Full Randomised"), ylab = "delta statistic", xlab = " Phylogenetic Signal Tests")
+```
+The delta statistic of photoperiod sensitivity as a three leveled trait is a lot higher than a model
+
+#Base tree with lines at end (Visualising the tree with ggtree)
+```{r}
+ggtree(tree) + #labels
+    geom_strip(taxa1 = 199, taxa2 = 200, 
+               barsize = 0.8,
+               color = "blue",
+               label = " Calibrochoa")+ 
+    geom_strip(taxa1 = 40, taxa2 = 64, 
+               barsize = 0.8,
+               color = "gray",
+               label = " Faboideae")+ 
+    geom_strip(taxa1 = 40, taxa2 = 47, 
+               barsize = 0.8,
+               color = "red",
+               label = " IRLC")+ 
+    geom_strip(taxa1 = 56, taxa2 = 64, 
+               barsize = 0.8,
+               color = "yellow",
+               label = " MILL")+ 
+    geom_strip(taxa1 = 24, taxa2 = 25, 
+               barsize = 0.8,
+               color = "green",
+               label = " Geum")+ 
+    geom_strip(taxa1 = 399, taxa2 = 435, 
+               barsize = 0.8,
+               color = "gray",
+               label = " Poöideae")
+```
+#prep to make graph
+```{r}
+tree4d <- phylo4d(tree, pp_sorted$photoperiodism)
+```
+
+
+#OPTIONAL:finding mrca of clades to highlight (can't use a phylo4d object for this unforunately)
+```{r}
+library(phytools)
+findMRCA(tree, tips = c(199, 201), type = "node") #Calibrochoa
+findMRCA(tree, tips = c(40, 64), type = "node") #Faboideae
+findMRCA(tree, tips = c(40, 47), type = "node") #IRLC
+findMRCA(tree, tips = c(56, 64), type = "node") #MILL
+findMRCA(tree, tips = c(26, 23), type = "node") #Geum
+findMRCA(tree, tips = c(398, 435), type = "node") #Poöideae
+```
+
+#Base tree with highlighted labels
+```{r}
+ggtree(tree) + #labels
+  geom_hilight(node = 681, fill = "#2E5077")+#Calibrochoa
+  geom_hilight(node = 520, fill = "#74B45E")+#Faboideae
+  geom_hilight(node = 523, fill = "#F28304")+#IRLC
+  geom_hilight(node = 520, fill = "#F28304")+#MILL
+  geom_hilight(node = 509, fill = "grey")+#Geum
+  geom_hilight(node = 856, fill = "darkgrey")#Poöideae
+```
+
+#Base tree with a combination of labels to best show the clades
+```{r}
+labelled_tree <- ggtree(tree4d, size = 0.2) + 
+    geom_strip(taxa1 = 199, taxa2 = 200, 
+               barsize = 0.8,
+               color = "#E7B800",
+               label = " Calibrochoa")+ 
+    geom_strip(taxa1 = 40, taxa2 = 64, 
+               barsize = 0.8,
+               color = "darkgrey",
+               label = " Faboideae",
+               offset = 30,
+               angle = 270,
+               hjust='center',
+               offset.text = 10)+ 
+    geom_strip(taxa1 = 40, taxa2 = 47, 
+               barsize = 0.8,
+               color = "#E7B800",
+               label = " IRLC")+ 
+    geom_strip(taxa1 = 56, taxa2 = 64, 
+               barsize = 0.8,
+               color = "#FC4E07",
+               label = " MILL")+ 
+    geom_strip(taxa1 = 26, taxa2 = 23, 
+               barsize = 0.8,
+               color = "#74B45E",
+               label = " Geum")+ 
+    geom_strip(taxa1 = 399, taxa2 = 435, 
+               barsize = 0.8,
+               color = "#00AFBB",
+               label = " Poöideae")+
+  geom_hilight(node = 681, fill = "#F28304")+ #Calibrochoa
+  geom_hilight(node = 520, fill = "#FC4E07", colour = "white")+ #Faboideae & #MILL (MILL = Faboideae - IRLC)
+  geom_hilight(node = 523, fill = "#E7B800")+ #IRLC
+  geom_hilight(node = 509, fill = "#74B45E")+ #Geum
+  geom_hilight(node = 856, fill = "#00AFBB")+ #Poöideae
+  xlim_tree(30)
+```
+
+#Final tree with addition of photoperiod data
+```{r}
+final_tree <- labelled_tree + 
+  geom_tippoint(aes(colour = dt),  size = 0.5, shape = 15, position = position_nudge(x = 1.5))+
+  scale_colour_manual(values = c("#FC4E07", "#E7B800", "#00AFBB"))+
+  theme(legend.position = "none")
+#+ geom_text(aes(label=node), size = 1) #labels for the nodes in case you need to change anything
+
+final_tree
+```
+
+#make circular graph as well for fun
+```{r}
+tree_cbase <- ggtree(tree4d, size = 0.2, layout = "circular") + 
+    geom_strip(taxa1 = 199, taxa2 = 200, 
+               barsize = 0.8,
+               color = "#E7B800",
+               label = " Calibrochoa")+ 
+    geom_strip(taxa1 = 40, taxa2 = 64, 
+               barsize = 0.8,
+               color = "darkgrey",
+               label = " Faboideae",
+               offset = 30,
+               angle = 270,
+               hjust='center',
+               offset.text = 10)+ 
+    geom_strip(taxa1 = 40, taxa2 = 47, 
+               barsize = 0.8,
+               color = "#E7B800",
+               label = " IRLC")+ 
+    geom_strip(taxa1 = 56, taxa2 = 64, 
+               barsize = 0.8,
+               color = "#FC4E07",
+               label = " MILL")+ 
+    geom_strip(taxa1 = 26, taxa2 = 23, 
+               barsize = 0.8,
+               color = "#74B45E",
+               label = " Geum")+ 
+    geom_strip(taxa1 = 399, taxa2 = 435, 
+               barsize = 0.8,
+               color = "#00AFBB",
+               label = " Poöideae")+
+  geom_hilight(node = 681, fill = "#F28304")+ #Calibrochoa
+  geom_hilight(node = 520, fill = "#FC4E07", colour = "white")+ #Faboideae & #MILL (MILL = Faboideae - IRLC)
+  geom_hilight(node = 523, fill = "#E7B800")+ #IRLC
+  geom_hilight(node = 509, fill = "#74B45E")+ #Geum
+  geom_hilight(node = 856, fill = "#00AFBB")+ #Poöideae
+  xlim_tree(30)+ 
+  geom_tippoint(aes(colour = dt),  size = 0.6, position = position_nudge(x = 1.5))+
+  scale_colour_manual(values = c("#FC4E07", "#E7B800", "#00AFBB"))+
+  theme(legend.position = "none")
+
+tree_cbase
+```

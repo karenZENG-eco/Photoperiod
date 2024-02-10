@@ -1,56 +1,79 @@
 ---
-title: "R Notebook"
+title: "PhotoperiodNotebook2_Analysis"
 output: html_notebook
 ---
 
-#load data
-Photoperiod data:
-- species
-- photoperiodism: photoperiod sensitivity requirements(ad, id, ld, sd, ldsd, lsd, sd, sld, yes (exists in unknown form), na)
-- cultivar: if present, cultivar name
-- reference: source of information
-- notes: additional notes on photoperiod sensitivity
-- sensitivity_yn: binary variable of whether photoperiod sensitivity in any form exists in species
-- order: order in which records are considered, non cultivars and more specific records are prioritised
+This code analyses whether the different flowering time changes (1950-2017) are correlated with the photoperiod sensitivity cues required for each species to flower. It also generates the df.csv file required for further analyses.
 
-Flowering time data:
-- species
-- year: year of record
-- doy: day of year
-- source: source of information
+For more information, please contact:
+karen.zeng@unsw.edu.au
 
+##load packages
 ```{r}
-library(tidyverse)
+library(tidyverse)#general data wrangling
 library(ggplot2) #for graphs
 
-library(viridis)
-mypalette = viridis(12) #viridis over 12 segments, 1=yellow 4=green 8=blue 12=purple
+library(lme4) #mixed models
+library(lmerTest) #p-values in summary()
+```
 
-pp <- read.csv("./Data/appendix1.csv") #read in photoperiod data
+#load viridis palette
+```{r}
+library(viridis) #load a colourblind-friendly palette
+mypalette = viridis(12) #viridis over 12 segments, 1=yellow 4=green 8=blue 12=purple
+```
+
+##load data
+```{r}
+pp <- read.csv("./data/SI1_Photoperiod_photoperiod_data.csv") #read in photoperiod data
 
 pp <- pp %>% 
   group_by(species)%>% #for each species
-  slice(which.min(order))  #find most accurate photoperiod record
+  slice(which.min(order))  #find most accurate photoperiod record based on recent-ness and number of treatments
 
-ft <- read.csv("./data/appendix2.csv") #read completed flowering time data
+ft <- read.csv("./data/SI2_Photoperiod_first_flowering_day_data.csv") #read completed flowering time data
 
 df <- left_join(ft, pp, by = "species") #join the two datasets
 rm(pp)
 rm(ft)
-
 ```
-#Remove unused records and relevel factors so day neutral is the base.
 
+##Define simplified photoperiodism field to group all the different types of photoperiod cues
 ```{r}
-df <- df %>% subset(simple_photoperiodism != "other")#remove data without long, short or no daylenth requirement. 
+df$simple_photoperiodism <- "other" #if something is not ld, sd or na it will be grouped as 'other'
+
+df$simple_photoperiodism[df$photoperiodism == "na"] <-"na"
+df$simple_photoperiodism[df$photoperiodism == "sd"] <-"sd"
+df$simple_photoperiodism[df$photoperiodism == "ld"] <-"ld"
+
+#write.csv(df, "./data/df.csv")
+```
+
+##Remove borderline cases of photoperiodism from analysis
+```{r}
+df <- df %>% subset(simple_photoperiodism != "other")#only keep ld, sd and na data
 
 df$simple_photoperiodism <- as.factor(df$simple_photoperiodism) #make it a factor
 df$simple_photoperiodism <- relevel(df$simple_photoperiodism, "na") #relevel so na is the reference factor
+
+table(df$simple_photoperiodism)
+
 ```
 
-#a quick summary and map of our data
+#General look at combined data
+```{r}
+unique(df$photoperiodism) #print all the different types of photoperiod cues found
+
+unique(df$species) #print all the different species covered by both datasets
+
+plot(df$year, df$doy) #plot of whenever something first flowered throughout the years (very overlapped)
+```
+
+## plotting our data geographically
 ```{r}
 summary(df)
+
+#You only need these packages if you want to map the data
 
 library(sf) #for applying graphs to spatial data (simple version of sp)
 library(rgeos) #for gCentroid()
@@ -71,25 +94,26 @@ map_pp
 
 ```
 
+Unfortunately, our data is not very evenly distributed. Hopefully this issue will be resolved in the future with more citizen science and large scale data initiatives.
+
+```{r}
+remove(map_base, map_pp)
+```
+
+
 #Analyse data
 ```{r}
-library(tidyverse) #easy manipulation
-library(lme4) #mixed models
-library(lmerTest) #p-values in summary()
+#I've left some previous iterations of our model commented out so you can see our progress!
 
 #lm_basic <- lmer(doy ~ sensitivity_yn*year + (1|species), data = df) #original model with species and binary sensitivity
 
-#lm_binary <- lmer(doy ~ sensitivity_yn*year-1 + (1|species) + lat:sensitivity_yn, data = df) #improved model with latitude as fixed effect
+#lm_binary <- lmer(doy ~ sensitivity_yn*year + (1|species) + lat:sensitivity_yn, data = df) #improved model with latitude
 
-#lm_final_init <- lmer(doy ~ simple_photoperiodism*year-1 + (1|species) + lat, data = df)#improved model with photoperiod groups instead of binary but single latitude effect
+#lm_final_init <- lmer(doy ~ simple_photoperiodism*year + (1|species) + lat:simple_photoperiodism, data = df)#improved model with photoperiod groups instead of binary
 
-#lm_comparison <- lmer(doy ~ year + (1|species) + lat:simple_photoperiodism, data = df) #comparison model to lm_final with photoperiodism removed as variable
+lm_comparison <- lmer(doy ~ year + (1|species) + lat, data = df) #comparison model to lm_final without photoperiod variables
 
-lm_final <- lmer(doy ~ simple_photoperiodism*year-1 + (1|species) + lat:simple_photoperiodism, data = df)#improved model with all changes as above and seperate latitude effects
-
-#summary(lm_basic)
-
-summary(lm_final)
+lm_final <- lmer(doy ~ simple_photoperiodism*year + (1|species) + lat:simple_photoperiodism, data = df)#improved model with all changes as above and seperate latitude effects
 
 ```
 
@@ -98,44 +122,45 @@ summary(lm_final)
 qqnorm(resid(lm_final)) #qqplot
 qqline(resid(lm_final)) #add line
 
-hist(resid(lm_final), breaks = 25) #look at normality of residuals
+hist(resid(lm_final), breaks = 100) #look at normality of residuals
 ```
 The qq plot seems a bit heavy tailed at the start but after looking at the histogram, the proportion of samples in the tail is very small compared to the main section, which fits pretty well. 
+
+#Looking at the linear model
+```{r}
+summary(lm_final)
+```
+
+We have a lot of variable to unpack, so remembering that day neutral is the baseline for when sd or ld is mentioned:
+
+##Day neutral and short day plants are advancing at almost a day per decade, but long day plants are not!
+- base flowering time advancement is -0.09 days/year (for plants with no photoperiod requirements)
+- ld plants have a significant modifier of +0.11 days/year, so they move +0.2 days/year
+- sd plants have no significant difference to day neutral, so they move the same as the base -0.09 days/year 
+
+##As you move away from the equator, short day and day neutral plants flower later. But short day plants flower earlier.
+- latitude has an effect of +1.1 days/degree for ld and na plants
+- but a very different -3.7 days/degree for short day plants!
 
 #Comparing our final model with the others
 To determine whether photoperiod information improves our flowering time model, let's see compare the pair
 ```{r}
-AIC(lm_final) #compare the pair
-AIC(lm_comparison)
+aic_final <- AIC(lm_final) #compare the pair
+aic_comparison <- AIC(lm_comparison)
 
-anova(lm_final, lm_comparison) #compare the pair statistically
+anova_comparison_final <- anova(lm_comparison, lm_final) #compare the pair statistically
+
+Anova(lm_final) #also check if photoperiodism has an effect on the interaction between photoperiod and year
 ```
 The AICs on their own suggest that photoperiod does improve the model, and the ANOVA shows that this improvement is significant!
 
-#Comparing our final models through bootstrapping
+#Optional: Comparing our final models through bootstrapping
 ```{r}
-library(pbkrtest)
+#library(pbkrtest)
 
-bootstrap <- PBmodcomp(lm_final, lm_comparison, nsim = 5999) #bootstrap comparison
-bootstrap
+#bootstrap <- PBmodcomp(lm_final, lm_comparison, nsim = 5999) #bootstrap comparison
 ```
-Yes they are significantly different
-
-So now we've confirmed that photoperiodism has an effect on flowering time. 
-Let's look at the details
-
-#Look at what our model tells us
-```{r}
-summary(lm_final) #look at our model
-```
-We have a lot of variable to unpack, so remembering that day neutral is the baseline for when sd or ld is mentioned:
-
-- base flowering time advancement is -0.09 days/year
-- ld plants have a modifier of +0.11 days/year, so they move +0.2 days/year
-- sd plants have no significant modifier, so they move the same as the base -0.09 days/year
-
-- latitude has an effect of +1.1 days/degree for ld and na plants
-- but a very different -3.7 days/degree for short day plants!
+Yes they are significantly different according to this method too :D
 
 #look at each photoperiod group seperately and in emtrends to check the main results
 ```{r}
@@ -157,17 +182,18 @@ summary(lm_ld)
 
 ```{r}
 library(emmeans)
-emtrends(lm_final, pairwise~simple_photoperiodism, var = "year")
+em <- emtrends(lm_final, pairwise~simple_photoperiodism, var = "year")
+em
 ```
 
-These trends seem to be pretty consistent with our initial results.
+These trends seem to be pretty consistent with our initial results. 
+
+Short day plants are similar to Day Neutral (na) plants, while Long day plants are advancing in the opposite direction, if at all.
 
 #plot graphs
+Unfortunately, it get a bit tricky to plot a graph that fully represents the results we get when using random effects, but will try our best.
+
 ```{r}
-library(viridis) #load a nice and colourblind-friendly palette
-
-mypalette = viridis(12) #viridis again
-
 ggplot.photogroups <- 
   ggplot(subset(df))+
   geom_point(aes(y = doy, x = year, colour = simple_photoperiodism), size = 1, alpha = 0.2)+
@@ -231,84 +257,45 @@ ggplot.photogroups.main <-
         axis.text = element_text(size = 10),
         axis.title = element_text(size = 15, face  = "bold"),
         plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"))
-
 ```
 
-#a graph with no transparency in the points to pull the legend from
+##second version of graph for nicer looking publication.
 ```{r}
-#no other
-ggplot.photogroups.legend <- 
-  ggplot()+
-  geom_point(aes(y = doy, x = year, colour = simple_photoperiodism), size = 3, alpha = 1)+
-  scale_colour_manual(values = c(mypalette[3], mypalette[8], mypalette[11]), labels = c("Day Neutral", "Long Day","Short Day"))+
+ggplot.photogroups.main2 <- 
+  ggplot(df)+
+  geom_point(aes(y = doy, x = year, 
+                 colour = simple_photoperiodism, 
+                 shape = simple_photoperiodism), 
+             size = 1, alpha = 0.5)+
+  scale_shape_manual(name = "Photoperiod Sensitivity", 
+                     values = c(0, 1, 2), # o,+,x
+                     labels = c("Day Neutral", "Long Day","Short Day"))+
+  scale_colour_manual(name = "Photoperiod Sensitivity", 
+                      values = c("#00AFBB", "#E7B800", "#FC4E07"),
+                      labels = c("Day Neutral", "Long Day", "Short Day")) +
+  geom_segment(aes(x = 1950, y = 135.3, xend = 2017, yend = 129.0), colour = "#00AFBB", size = 1)+ #na
+    geom_segment(aes(x = 1950, y = 146.9, xend = 2017, yend = 148.1), colour = "#E7B800", size = 1)+ #ld
+    geom_segment(aes(x = 1950, y = 172.1, xend = 2017, yend = 162.5), colour = "##FC4E07", size = 1)+ #sd 
   xlab("Year")+
-  ylim(-4, 366)+
-  xlim(1950, 2017)+
+  ylim(-1, 366)+
+  xlim(1949, 2017)+
   ylab("Average First Flowering Day")+
-  guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE)) +
+  guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE), shape = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE)) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
         axis.line = element_line(colour = "black"),
         axis.text = element_text(size = 10),
         axis.title = element_text(size = 15, face  = "bold"),
-        plot.margin = margin(1, 1, 1, 1, "cm"))
-
+        plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"))
 ```
 
 ```{r}
-#average latitude of all points
-mean(df$lat)
-
-#average latitude grouped by photoperiod binary
-df %>% group_by(sensitivity_yn)%>% summarize(mean = mean(lat, na.rm = TRUE))
-
-#average latitude grouped by photoperiod sensitivity
-df %>% group_by(simple_photoperiodism)%>% summarize(mean = mean(lat, na.rm = TRUE))
+ggplot.photogroups.main
 ```
-#Additional main analysis that accounts for phylogeny
 
-#nevermind, phyr is not the best package for this task...
-
-Before running this code, run the photoperiod notebook 3 code until tree and pp_sorted is created.
 
 ```{r}
-library(phyr)
+ggplot.photogroups.main2
 ```
-
-##add phylogenetic data to df
-
-```{r}
-df <- list(phy = tree, data = df) #combine the phylogenetic tree and dataframe into one
-
-df$data$species <- gsub(" ", "_", df$data$species)  #add column called sp which is just species name for the code to recognise
-```
-
-#filtering out data with corresponding information.
-
-```{r}
-dflist <- unique(df$data$species) #get a list of species before filtering to check
-treelist <- df$phy$tip.label #get a list of species in our tree
-
-specieslist <- intersect(dflist, treelist) #which species are in both lists?
-
-df$data <- df$data %>% filter(species %in% specieslist) #remove data with no phylogenetic information available :'(
-
-df$phy <-keep.tip(df$phy, specieslist) #remove tree parts with no photoperiod data available as well :''(
-
-rm(treelist)#clean up environment by removing unused lists
-rm(dflist)
-```
-
-Unfortunately, we have to go from 88 species to 78 species because we didn't have a solid phylogenetic tree with branch lengths for 10 of our species.
-
-##re-run glmm with phylo component instead of species
-```{r}
-lm_phylo <- pglmm(doy ~ simple_photoperiodism*year-1 + (1|sp__) + lat:simple_photoperiodism, 
-                  data = df, 
-                  family = "poisson",
-                  cov_ranef = list(sp = tree), add.obs.re = FALSE)
-
-```
-
 

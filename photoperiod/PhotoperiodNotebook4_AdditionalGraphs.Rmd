@@ -1,0 +1,397 @@
+---
+title: "Additional graphs"
+output: 
+---
+This code produces additional graphs for the manuscript titled "Species that require long day conditions to flower are not advancing their flowering phenology as fast as species without photoperiod requirements."
+
+#load data and packages
+
+##packages
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(ggpubr)
+
+library(rnaturalearth)
+library(rnaturalearthhires)
+library(terra)
+
+library(rgbif)
+library(usethis)
+```
+##gbif information
+```{r}
+usethis::edit_r_environ() #edit environment to include gbif login details
+```
+
+NOTE: If you are running this for the first time and wish to access the data yourself, you'll have to create an environ file with your own GBIF account details
+
+##data
+```{r}
+pp <- read.csv("./data/SI1_Photoperiod_photoperiod_data.csv")
+ft <- read.csv("./data/SI2_Photoperiod_first_flowering_day_data.csv")
+mypalette = c("#FC4E07", "#E7B800","#00AFBB", "grey")
+```
+
+##categorise photperiod
+```{r}
+pp$simple_photoperiodism <- pp$photoperiodism
+
+pp$simple_photoperiodism[pp$simple_photoperiodism %in% c("ad", "id", "lsd", "sld", "yes")] <- "other"
+
+pp$simple_photoperiodism <- factor(pp$simple_photoperiodism, levels = c("sd", "ld", "na", "other"), ordered = T)
+
+```
+
+##merge df
+```{r}
+df <- left_join(ft, pp, by = "species")
+```
+
+#summarise photoperiod data
+
+##table
+```{r}
+table(pp$photoperiodism)
+table(pp$simple_photoperiodism)
+
+```
+
+##graph
+```{r}
+fig_ppcount <- ggplot(data = pp) +
+  geom_bar(aes(x = simple_photoperiodism, fill = simple_photoperiodism)) +
+  theme_pubr() +
+  scale_fill_manual(values = mypalette) +
+   theme(legend.position="none")+ 
+  scale_x_discrete(labels = c("Short day", "Long day", "Day neutral", "Other"))+
+  labs(x = "Photoperiod sensitivity", y = "Number of species")
+
+fig_ppcount
+
+ggexport(fig_ppcount, filename = "./figures/appendix_fig_1.tiff", width = 2040, height = 1020, res = 300)
+```
+#summarise flowering time photoperiod data by year
+
+##prepare summary table
+```{r}
+df_yearsum <- df %>% count(year, simple_photoperiodism)
+df_yearsum <- df_yearsum %>% filter(!is.na(simple_photoperiodism))
+df_yearsum
+```
+
+##plot
+```{r}
+fig_ppyear <- df_yearsum %>% filter(simple_photoperiodism != "other") %>%
+  ggplot() +
+  geom_bar(aes(x = year, y = n, fill = simple_photoperiodism), position = "stack", stat = "identity") +
+  theme_pubr() +
+  theme(legend.position = "bottom")+
+  scale_fill_manual(values = mypalette, labels = c("Short day", "Long day", "Day neutral", "Other")) +
+   labs(x = "Year", y = "Number of records", fill = "Photoperiod sensitivity")
+ 
+fig_ppyear
+
+ ggexport(fig_ppyear, filename = "./figures/appendix_fig_2.tiff", width = 2040, height = 1020, res = 300)
+```
+
+#summarise flowering time photoperiod data by coordinates
+##plot
+```{r}
+fig_ppmap <- df %>% filter(!is.na(simple_photoperiodism)) %>% 
+  ggplot() + #specify map base
+  borders("world", colour="gray50", fill="gray50") +
+  geom_point(data = df, 
+              aes(x = lon, y = lat, colour = simple_photoperiodism), 
+              size = 0.5, alpha = 0.2, shape = 2) +#layer points on map
+  coord_cartesian(xlim = c(-120, 50),ylim = c(0, 90))+ 
+  theme_pubr() +
+  scale_colour_manual(values = mypalette) + #add colour theme
+  scale_x_continuous(name = "Longitude", 
+                   breaks = c(-100, -50, 0, 50), 
+                   labels = c ("100°W", "50°W", "0°", "50°E")) +
+  scale_y_continuous(name = "Latitude", 
+                   breaks = c(0, 20, 40, 60, 80), 
+                   labels = c("0°", "20°N", "40°N", "60°N", "80°N")) +
+  theme(legend.position="none")
+
+fig_ppmap
+```
+
+
+```{r}
+ggexport(fig_ppmap, filename = "./figures/appendix_fig_3a.tiff", width = 990, height = 700, res = 300)
+```
+
+#summarise flowering time photoperiod data by country
+##determine country of each point
+```{r}
+countries <- ne_countries(type = "map_units", scale = 50)#download countries map
+
+df_spatial <- vect(df, geom = c("lon", "lat"), crs = "epsg:3857")
+df_spatial <- terra::extract(vect(countries), y = df_spatial) #extract country from coords
+
+df$country_name <- df_spatial$geounit #add country
+
+#temp <- df %>% filter(is.na(df$country_name)) #notice that all the unmatched countries are from the United Kingdom (maybe the scale of country polygon is too small?) We can't tell where the PEP725 records fully come from, but the rest seem to be from England so I'm going to assign them to england (sorry irelands and scotland!)
+
+df$country_name <- replace_na(df$country_name, replace = "England")
+
+df_countrysummary <- df %>% group_by(country_name, simple_photoperiodism) %>% count()
+df_countrysummary <- pivot_wider(df_countrysummary, names_from = simple_photoperiodism, values_from = n)
+df_countrysummary <- df_countrysummary[1:5] #exclude true NAs
+colnames(df_countrysummary)[1] <- "geounit"
+
+df_countrysummary$max <- colnames(df_countrysummary)[apply(df_countrysummary,1,which.max)] #column with the max records
+
+#attach to the world map
+countries <- merge(countries, df_countrysummary, by = "geounit", all.x = TRUE)
+```
+
+##plot
+```{r}
+fig_maxmap <- ggplot(data = countries) +
+  geom_sf(aes(fill = max)) +
+  coord_sf(xlim = c(-120, 50),ylim = c(0, 90)) +
+  labs(x = "Longitude", y = "Latitude") +
+  theme_pubr()+
+  scale_fill_manual(values = mypalette[2:4]) +
+  theme(legend.position="none")
+
+fig_maxmap
+```
+
+
+```{r}
+ggexport(fig_maxmap, filename = "./figures/appendix_fig_3b.tiff", width = 990, height = 700, res = 300)
+```
+
+```{r}
+fig_namap <- df %>% filter(simple_photoperiodism == "na") %>%
+  ggplot() +
+  borders("world", fill="antiquewhite", colour = "grey42") +
+  geom_point(aes(x = lon, y = lat), 
+             size = 1.5, alpha = 0.5, shape = 23,
+             colour = "grey42", fill = mypalette[3]) +
+coord_sf(xlim = c(-120, 50),ylim = c(0, 90)) +
+    scale_x_continuous(name = "Longitude", 
+                   breaks = c(-100, -50, 0, 50), 
+                   labels = c ("100°W", "50°W", "0°", "50°E")) +
+  scale_y_continuous(name = "Latitude", 
+                   breaks = c(0, 20, 40, 60, 80), 
+                   labels = c("0°", "20°N", "40°N", "60°N", "80°N"))+
+  labs(x = "Longitude", y = "Latitude", fill = "Number of records") +
+  theme_pubr()+
+  theme(panel.background = element_rect(fill = "aliceblue"))
+
+fig_namap
+
+ggexport(fig_namap, filename = "./figures/appendix_fig_3na.tiff", width = 1020, height = 700, res = 300)
+```
+
+```{r}
+fig_sdmap <- df %>% filter(simple_photoperiodism == "sd") %>%
+  ggplot() +
+  borders("world", fill="antiquewhite", colour = "grey42") +
+  geom_point(aes(x = lon, y = lat), 
+             size = 1.5, alpha = 0.5, shape = 23,
+             colour = "grey42", fill = mypalette[1]) +
+coord_sf(xlim = c(-120, 50),ylim = c(0, 90)) +
+    scale_x_continuous(name = "Longitude", 
+                   breaks = c(-100, -50, 0, 50), 
+                   labels = c ("100°W", "50°W", "0°", "50°E")) +
+  scale_y_continuous(name = "Latitude", 
+                   breaks = c(0, 20, 40, 60, 80), 
+                   labels = c("0°", "20°N", "40°N", "60°N", "80°N"))+
+  labs(x = "Longitude", y = "Latitude", fill = "Number of records") +
+  theme_pubr()+
+  theme(panel.background = element_rect(fill = "aliceblue"))
+
+fig_sdmap
+ggexport(fig_sdmap, filename = "./figures/appendix_fig_3sd.tiff", width = 1020, height = 700, res = 300)
+```
+
+```{r}
+fig_ldmap <- df %>% filter(simple_photoperiodism == "ld") %>%
+  ggplot() +
+  borders("world", fill="antiquewhite", colour = "grey42") +
+  geom_point(aes(x = lon, y = lat), 
+             size = 1.5, alpha = 0.5, shape = 23,
+             colour = "grey42", fill = mypalette[2]) +
+coord_sf(xlim = c(-120, 50),ylim = c(0, 90)) +
+    scale_x_continuous(name = "Longitude", 
+                   breaks = c(-100, -50, 0, 50), 
+                   labels = c ("100°W", "50°W", "0°", "50°E")) +
+  scale_y_continuous(name = "Latitude", 
+                   breaks = c(0, 20, 40, 60, 80), 
+                   labels = c("0°", "20°N", "40°N", "60°N", "80°N"))+
+  labs(x = "Longitude", y = "Latitude", fill = "Number of records") +
+  theme_pubr()+
+  theme(panel.background = element_rect(fill = "aliceblue"))
+fig_ldmap
+ggexport(fig_ldmap, filename = "./figures/appendix_fig_3ld.tiff", width = 1020, height = 700, res = 300)
+```
+
+
+```{r}
+fig_3maps <- annotate_figure(
+  ggarrange(ncol = 3,
+            fig_namap+ rremove("ylab"),
+            fig_sdmap+ rremove("ylab"), 
+            fig_ldmap+ rremove("ylab"),
+            labels = c("a)", "b)", "c)")),
+  left = text_grob("Latitude", rot = 90, 
+                   face = "bold", 
+                   size = 12)) 
+ggexport(fig_3maps, filename = "./figures/fig_3maps.tiff", width = 2040, height = 1020, res = 300)
+```
+
+#summarise flowering time photoperiod data by time series (by regional group)
+##determine the number of years per country
+```{r}
+df_combo_timeseries <- df %>% group_by(species, source) %>% summarise(count = n_distinct(year))
+df_timeseries_wide <- left_join(df, df_combo_timeseries)
+```
+does count affect the rate of flowering time change through time
+```{r}
+df$simple_photoperiodism <- factor(df$simple_photoperiodism, ordered = F)
+
+lm_timeseries <- lmer(doy ~ year + count:year + count + (1|species) + lat, data = df_timeseries_wide)
+
+summary(lm_timeseries)
+```
+
+
+##plot
+
+```{r}
+fig_combo_timeseries <- ggplot(data = df_combo_timeseries) +
+  geom_histogram(aes(x = count), boundary = 0, binwidth = 5) +
+  theme_pubr() + 
+  scale_x_continuous(breaks = seq(0,65,5)) +
+  labs(x = "Number of unique years per combination of species and source", y = "Count")
+
+fig_combo_timeseries
+
+ggexport(fig_combo_timeseries, filename = "./figures/appendix_fig_4.tiff", width = 2040, height = 1020, res = 300)
+```
+#Summarise taxa represented by photoperiod data
+
+##Obtain family for each record
+```{r}
+gbif_checklist <- name_backbone_checklist(pp$species)
+
+temp <- gbif_checklist %>% filter(is.na(family)) 
+#count non-matches
+
+pp$family <- gbif_checklist$family
+pp$genus <- gbif_checklist$genus
+
+df_families <- pp %>% count(family)
+df_families$proportion <- df_families$n/7.41
+
+df_genus_per_family <- pp %>% group_by(family) %>% 
+  mutate(n_genus_in_family = n_distinct(genus), .keep = "none") %>%
+  slice(1)
+
+df_families <- left_join(df_families, df_genus_per_family)
+
+df_families <- arrange(df_families, desc(n)) #reorder in descending order
+
+write_csv(df_families, "./ft_familysummary.csv")
+
+length(unique(gbif_checklist$species))
+length(unique(pp$genus))
+length(unique(pp$family))
+```
+
+#Replace the pie charts
+
+```{r}
+longevity$photoperiodism <- factor(longevity$photoperiodism, levels = c("sd", "ld", "na"))
+
+woodiness$photoperiodism <- factor(woodiness$photoperiodism, levels = c("sd", "ld", "na"))
+```
+
+
+##Longevity
+```{r}
+fig_3a <- ggplot(data = longevity) +
+  geom_bar(aes(x = life_history, y = n, fill = photoperiodism), stat = "identity", position=position_dodge()) + 
+  theme_pubr() +
+  scale_fill_manual(values = mypalette, labels = c("Short day", "Long day", "Day neutral")) +
+  labs(fill = "Photoperiodism", x = "", y = "Number of records") +
+  scale_x_discrete(labels = c("Annual", "Perennial"))+
+  scale_y_continuous(limits = c(0, 150))
+
+fig_3a
+
+ggexport(fig_3a, filename = "./figures/fig_3a.tiff", width = 990, height = 660, res = 300)
+```
+
+##woodiness
+```{r}
+fig_3b <- ggplot(data = woodiness) +
+  geom_bar(aes(x = woodiness, y = n, fill = photoperiodism), stat="identity", position=position_dodge()) + 
+  theme_pubr() +
+  scale_fill_manual(values = mypalette, labels = c("Short day", "Long day", "Day neutral")) +
+  labs(fill = "Photoperiodism", x = "", y = "Number of records") +
+  scale_x_discrete(labels = c("Herbaceous", "Woody"))+
+  scale_y_continuous(limits = c(0, 150))
+
+fig_3b
+
+ggexport(fig_3b, filename = "./figures/fig_3b.tiff", width = 990, height = 660, res = 300)
+```
+
+```{r}
+fig_3 <- annotate_figure(ggarrange(fig_3a+ rremove("ylab"),
+                                   fig_3b+ rremove("ylab"), 
+                                   labels = c("a)", "b)"), 
+                                   hjust = 0.5, 
+                                   common.legend = TRUE, 
+                                   legend="bottom"),
+                         left = text_grob("Number of Species", rot = 90, 
+                                          face = "bold", 
+                                          size = 12)) 
+
+fig_3
+
+ggexport(fig_3, filename = "./figures/fig_3.tiff", width = 2040, height = 1020, res = 300)
+```
+
+#Redo figure 1 while we're at it
+```{r}
+fig_1 <- 
+  ggplot(df)+
+  geom_point(aes(y = doy, x = year, 
+                 colour = simple_photoperiodism, 
+                 shape = simple_photoperiodism), 
+             size = 1, alpha = 0.5)+
+  scale_shape_manual(name = "Photoperiod Sensitivity", 
+                     values = c(0, 1, 2), # o,+,x
+                     labels = c("Day Neutral", "Long Day","Short Day"))+
+  scale_colour_manual(name = "Photoperiod Sensitivity", 
+                      values = c(mypalette[3], mypalette[2], mypalette[1]),
+                      labels = c("Day Neutral", "Long Day", "Short Day")) +
+  geom_segment(aes(x = 1950, y = 135.3, xend = 2017, yend = 129.0), colour = mypalette[3], size = 1)+ #na
+    geom_segment(aes(x = 1950, y = 146.9, xend = 2017, yend = 148.1), colour = mypalette[2], size = 1)+ #ld
+    geom_segment(aes(x = 1950, y = 172.1, xend = 2017, yend = 162.5), colour = mypalette[1], size = 1)+ #sd 
+  xlab("Year")+
+  ylim(-1, 366)+
+  xlim(1949, 2017)+
+  ylab("Average First Flowering Day")+
+  theme_pubr()+
+  guides(color = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE), shape = guide_legend(title = "Photoperiod Sensitivity", reverse = TRUE)) +
+  theme(legend.position = "bottom",
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"))
+
+fig_1
+
+ggexport(fig_1, filename = "./figures/fig_1.tiff", width = 2040, height = 1530, res = 300)
+```
+

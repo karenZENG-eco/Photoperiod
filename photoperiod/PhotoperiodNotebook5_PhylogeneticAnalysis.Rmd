@@ -1,0 +1,146 @@
+---
+title: "PhotoperiodNotebook5_PhylogeneticAnalysis"
+output: html_notebook
+---
+This code aims to repeat the analysis of flowering time change and photoperiod, with added phylogenetic information (since we found a phylogenetic signal in notebook 4. 
+
+If df is not loading in, run the start of photoperiod notebook 2 to generate the combined dataframe.
+
+In order to include this phylogenetic information, we have had to switch to a per-species analysis instead of the per-photoperiod-group analysis performed previously. This change unfortunately reduced the amount of data we could use in the analysis but will allow us to draw new conclusions as to whether photoperiod sensitivity acts independently from phylogeny, since it is such a plastic trait.
+
+For more information, please contact:
+karen.zeng@unsw.edu.au
+
+##load in packages
+```{r warning=FALSE}
+library(tidyverse) #dplyr for general manipulation
+library(lme4) #for general linear model stuff
+library(nlme) #mixed effect models
+library(broom) #for do function
+
+library(ggplot2) #graphs :)
+
+library(ape) #general phylogenetic manipulation and tree
+library(phytools) #phylANOVA for anova with phylogenetic component
+
+```
+
+##load in datasets
+```{r}
+pp <- read.csv("./data/appendix1.csv") #read in combined photoperiod data
+
+pp <- pp %>% 
+  group_by(species)%>% #for each species
+  slice(which.min(order))  #find most accurate photoperiod record
+
+ft <- read.csv("./data/appendix2.csv") #read completed flowering time data
+
+df <- left_join(ft, pp, by = "species") #join the two datasets
+
+temp <- df %>% group_by(species) %>% count()
+
+pp <- left_join(pp, temp, by = "species")#add number of flowering time records available per species
+
+pp$simple_photoperiodism <- "other" #if something is not ld, sd or na it will be grouped as 'other'
+pp$simple_photoperiodism[pp$photoperiodism == "na"] <-"na"
+pp$simple_photoperiodism[pp$photoperiodism == "sd"] <-"sd"
+pp$simple_photoperiodism[pp$photoperiodism == "ld"] <-"ld"
+
+pp <- pp[pp$simple_photoperiodism != "other",] #filter out 'other' group
+
+rm(temp)#remove temporary datframe
+
+```
+
+
+```{r}
+species_summary <- df %>% 
+  group_by(species) %>% #for each species repeat analysis
+  do({ summ <- summary(lm(doy ~ year + lat, .)) #make linear model and take a summary
+       summarize(.,intercept = summ[["coefficients"]][1], #take only the numbers we are interested in from each lm
+                 intercept_p = summ[["coefficients"]][10], #ie what are the effects of each variable
+                 year_effect = summ[["coefficients"]][2],  #and how certain we are of each (p-val)
+                 year_p = summ[["coefficients"]][11],
+                 lat_effect = summ[["coefficients"]][3],
+                 lat_p = summ[["coefficients"]][12])}) %>% ungroup() #ungroup to put it all in one table
+
+
+species_summary <- left_join(species_summary, pp[, c(1, 2, 7, 9)], by = "species") #put the photoperiod info back in
+species_summary$significant_yn <- species_summary$year_effect < 0.05
+```
+
+ggplot
+```{r}
+ggplot(data = species_summary, aes(x = simple_photoperiodism, y = year_effect)) + geom_point(aes(alpha = 0.3, colour = year_effect < 0.05))
+```
+
+#summary
+Results will greatly change based on n weighting method but I think log is reasonable.
+A lot of data is lost in this analysis
+But we can correct for phylogeny at last.
+
+That year effect = -6 datapoint is sunflowers. It only has 5 points so a bit borderline but the data looks reasonable.
+
+Can look into in further sometime?
+
+#Prepare tree things
+```{r}
+tree <- read.tree("./data/ALLMB.txt") #read in tree
+
+species_summary$species <- gsub(" ", "_", species_summary$species)#change species name to fit phylo trees
+
+tree <- drop.tip(tree, tree$tip.label[-na.omit(match(species_summary$species, tree$tip.label))]) #trim tree to our species for ease of use
+
+species_summary$matchtree <- match(species_summary$species, tree$tip.label)
+species_summary<- species_summary[is.na(species_summary$matchtree) == F,] #trim species list to tree
+
+row.names(species_summary) <- species_summary$species #set row names as species so namecheck works
+namecheck <- name.check(phy = tree, data = species_summary) #check between tree and rownames of species summary which should be the species names now 
+
+#make it so order of dataframe matches order of tree
+species_summary <- species_summary%>%arrange(match(species_summary$species, tree$tip.label))
+```
+
+
+#Make a new dataframe and tree with all regression lines and use it to trim a new tree
+```{r}
+species_summary_finite <- as.data.frame(species_summary[is.finite(species_summary$year_effect),]) #remove non-finite results (na, nan and NULL) and turn it from a tibble to a dataframe
+
+tree_finite <- drop.tip(tree, tree$tip.label[-na.omit(match(species_summary_finite$species, tree$tip.label))]) #trim tree again
+
+tree_finite$node.label[tree_finite$node.label == ""] <- which(tree_finite$node.label == "") #label unnamed nodes based on node number
+
+row.names(species_summary_finite)<- species_summary_finite$species #makes species names the row names again for combining the dataframes
+```
+
+##Perform ANOVA between simple photoperiodism groups with all the finite regression lines 
+```{r}
+simple_photoperiodism_vector <- species_summary_finite$simple_photoperiodism
+year_effect_vector <- species_summary_finite$year_effect
+
+aov_species_summary_finite <- phylANOVA(tree = tree_finite, x = simple_photoperiodism_vector, y = year_effect_vector, nsim = 9999, posthoc = TRUE)
+```
+
+#Perform comparison ANOVA without phylo information
+```{r}
+aov_species_summary_NOPHYLO <- aov(year_effect ~ simple_photoperiodism, data = species_summary_finite)
+```
+
+#Compare the anovas
+```{r}
+aov_species_summary_finite
+
+summary(aov_species_summary_NOPHYLO)
+```
+
+#Results and Graphs
+
+From the comparison of the ANOVAs above, the difference between groups is no longer significant.
+
+This muddies the water a bit, but it makes sense that large scale trends in photoperiod sensitivity are phylogenetically conserved, and some clades tend to have the same daylength cues for flowering. After all, the evolution of flowering cue mechanisms is constantly happening, and is based on a whole load of interlocking parts working together and apart. 
+
+-----------------------------------------------------------------
+
+
+
+
