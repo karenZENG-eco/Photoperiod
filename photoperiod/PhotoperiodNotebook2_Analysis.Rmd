@@ -266,7 +266,7 @@ ggplot.photogroups.main2 <-
   geom_point(aes(y = doy, x = year, 
                  colour = simple_photoperiodism, 
                  shape = simple_photoperiodism), 
-             size = 1, alpha = 0.5)+
+             size = 2, alpha = 0.6)+
   scale_shape_manual(name = "Photoperiod Sensitivity", 
                      values = c(0, 1, 2), # o,+,x
                      labels = c("Day Neutral", "Long Day","Short Day"))+
@@ -275,7 +275,7 @@ ggplot.photogroups.main2 <-
                       labels = c("Day Neutral", "Long Day", "Short Day")) +
   geom_segment(aes(x = 1950, y = 135.3, xend = 2017, yend = 129.0), colour = "#00AFBB", size = 1)+ #na
     geom_segment(aes(x = 1950, y = 146.9, xend = 2017, yend = 148.1), colour = "#E7B800", size = 1)+ #ld
-    geom_segment(aes(x = 1950, y = 172.1, xend = 2017, yend = 162.5), colour = "##FC4E07", size = 1)+ #sd 
+    geom_segment(aes(x = 1950, y = 172.1, xend = 2017, yend = 162.5), colour = "#FC4E07", size = 1)+ #sd 
   xlab("Year")+
   ylim(-1, 366)+
   xlim(1949, 2017)+
@@ -297,5 +297,23 @@ ggplot.photogroups.main
 
 ```{r}
 ggplot.photogroups.main2
+```
+
+
+```{r}
+ggexport(ggplot.photogroups.main2, filename = "./figures/aob3_fig5_unfinished.tiff", width = 2126, height = 1063, res = 300)
+```
+
+
+#addition of growth form to linear model
+```{r}
+df$growth_form <- pp$growth_form[match(df$species, pp$species)]
+```
+
+```{r}
+lm_growthform <- lmer(doy ~ simple_photoperiodism*year + (1|species) + lat:simple_photoperiodism + growth_form, data = df)
+
+summary(lm_growthform)
+emtrends(lm_growthform, pairwise~simple_photoperiodism, var = "year")
 ```
 

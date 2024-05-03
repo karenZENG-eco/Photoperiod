@@ -297,6 +297,7 @@ tree_cbase <- ggtree(tree4d, size = 0.2, layout = "circular") +
     geom_strip(taxa1 = 199, taxa2 = 200, 
                barsize = 0.8,
                color = "#E7B800",
+               offset = 5,
                label = " Calibrochoa")+ 
     geom_strip(taxa1 = 40, taxa2 = 64, 
                barsize = 0.8,
@@ -309,18 +310,22 @@ tree_cbase <- ggtree(tree4d, size = 0.2, layout = "circular") +
     geom_strip(taxa1 = 40, taxa2 = 47, 
                barsize = 0.8,
                color = "#E7B800",
+               offset = 5,
                label = " IRLC")+ 
     geom_strip(taxa1 = 56, taxa2 = 64, 
                barsize = 0.8,
                color = "#FC4E07",
+               offset = 5,
                label = " MILL")+ 
     geom_strip(taxa1 = 26, taxa2 = 23, 
                barsize = 0.8,
                color = "#74B45E",
+               offset = 5,
                label = " Geum")+ 
     geom_strip(taxa1 = 399, taxa2 = 435, 
                barsize = 0.8,
                color = "#00AFBB",
+               offset = 5,
                label = " Poöideae")+
   geom_hilight(node = 681, fill = "#F28304")+ #Calibrochoa
   geom_hilight(node = 520, fill = "#FC4E07", colour = "white")+ #Faboideae & #MILL (MILL = Faboideae - IRLC)
@@ -334,3 +339,8 @@ tree_cbase <- ggtree(tree4d, size = 0.2, layout = "circular") +
 
 tree_cbase
 ```
+
+```{r}
+ggexport(tree_cbase, filename = "./figures/aob3_fig4_unfinished.pdf") #Export in pdf for labels to be manually relocated in illustrator
+```
+

@@ -3,7 +3,7 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-This code analyses whether woodiness or life history is correlated with the different types of photoeperiod sensitivity cues in flowering. 
+This code analyses whether woodiness or life history is correlated with the different types of photoperiod sensitivity cues in flowering. 
 
 For more information, please contact:
 karen.zeng@unsw.edu.au
@@ -11,6 +11,7 @@ karen.zeng@unsw.edu.au
 ##load packages
 ```{r}
 library(tidyverse)
+library(ggpubr)
 #library(ggplot2) #for graphs
 #library(viridis) #for colours
 
@@ -224,8 +225,107 @@ herbaceous_pie
 ```
 Both herbaceous and woody species are just as likely to be photoperiod sensitive, but it seems that woody species are more likely to be short day, and conversely herbaceous species are more likely to be long-day.
 
+#Updated version: Combine the two analyses into one chi-square test with three categories (Woody, Perennial and Annual)
+
+We can assume that woody species are not annual, and therefore combine the two datasets into a single one of woody species, perennial herbaceous and annual herbaceous growth forms:
 
 ```{r}
+pp$growth_form <- pp$life_history
 
+pp$growth_form[pp$woodiness == "woody"] <- "woody"
+
+##number of herbaceous species with undefined life history
+pp %>% filter(!is.na(growth_form)) %>% nrow()
+
+```
+
+```{r}
+growth_form <- pp %>% #Tally life histories
+  filter(!is.na(growth_form))%>% #remove records without life history
+  filter(photoperiodism != "other") %>% #remove records with unclear photoperiodism
+  group_by(photoperiodism, growth_form) %>%
+  tally()
+
+growth_form_matrix <- spread(growth_form, growth_form, n)
+rownames(growth_form_matrix) <- growth_form_matrix[,1]
+growth_form_matrix <- growth_form_matrix[,-1]
+
+chisq.test(growth_form_matrix, correct = T) #correct t for yates correction against overestimation of sig
+
+chisq.test(growth_form_matrix)$residuals #note 1, 2 and 3 refer to the lost rownames column c("ld", "na", "sd"), also note residuals are standardised as proportions to the group
+```
+
+```{r}
+growth_form$photoperiodism <- fct_relevel(growth_form$photoperiodism, "sd", "ld", "na")
+growth_form$growth_form <- fct_relevel(growth_form$growth_form, "annual", "perennial", "woody")
+```
+
+
+```{r}
+fig_3_growthform <- ggplot(data = growth_form) +
+  geom_bar(aes(x = growth_form, y = n, fill = photoperiodism), stat="identity", position = position_dodge()) + 
+  theme_pubr() +
+  scale_fill_manual(values = mypalette, name = "Photoperiod Sensitivity",  labels = c("Short day", "Long day", "Day neutral")) +
+  labs(fill = "", x = "", y = "Number of species") +
+  scale_x_discrete(labels = c("Annual", "Herbaceous \nPerennial", "Woody"))+
+  scale_y_continuous(limits = c(0, 100))+
+  theme(legend.position = "bottom",
+        legend.margin = margin(-15, 0, 0, -15), #nudge legend up and left to fit
+        axis.title = element_text(size = 6),
+        axis.text = element_text(size = 6),
+        legend.title = element_text(size = 6),
+        legend.text = element_text(size = 6)
+        ) 
+
+fig_3_growthform
+```
+
+```{r}
+ggexport(fig_3_growthform, filename = "./figures/aob3_fig3.tiff", width = 945, height = 630, res = 300)
+```
+
+
+Note the percentage numbers:
+
+annual
+ld
+47.27%
+na
+22.73%
+sd
+30%
+
+perennial
+ld
+48.39%
+na
+38.71%
+sd
+12.90%
+
+woody
+ld
+25.40%
+na
+34.92%
+sd
+39.68%
+
+We should also answer our original research question of is photoperiodism more likely in growth forms
+
+```{r}
+simple_growth_form <- pp %>% #Tally life histories
+  filter(!is.na(growth_form))%>% #remove records without life history
+  filter(photoperiodism != "other") %>% #remove unclear photoperiodism
+  group_by(sensitivity_yn, growth_form) %>%
+  tally()
+
+simple_growth_form <- spread(simple_growth_form, growth_form, n)
+
+simple_growth_form <- as.matrix(simple_growth_form[, 2:4], dimnames = list(c("Day neutral", "Photoperiod sensitive"), c("Annual", "Perennial", "Woody")))
+
+chisq.test(simple_growth_form, correct = T) #correct t for yates correction against overestimation of sig
+
+chisq.test(simple_growth_form)$residuals #note 1, 2 and 3 refer to 1 = day neutral , 2 =  photoperiod sensitive
 ```
 
